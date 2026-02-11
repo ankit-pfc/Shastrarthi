@@ -1,0 +1,214 @@
+[
+    {
+        "slug": "bhagavad-gita-chapter-2",
+        "title_en": "Bhagavad Gita - Chapter 2: Sankhya Yoga",
+        "title_sa": "भगवद्गीता - द्वितीय अध्याय: सांख्ययोग",
+        "category": "Itihasa",
+        "tradition": "Advaita",
+        "difficulty": "beginner",
+        "description": "The second chapter of the Bhagavad Gita, known as Sankhya Yoga, introduces the concepts of the eternal soul (atman) and the path of knowledge. Arjuna receives teachings on the nature of the self and the importance of performing one's duty without attachment to results.",
+        "verses": [
+            {
+                "ref": "2.11",
+                "sanskrit": "क्लैब्यं मा स्म गमः पार्थ नैतत्त्वय्युपपद्यते । क्षुद्रं हृदयदौर्बल्यं त्यक्त्वोत्तिष्ठ परन्तप ॥",
+                "transliteration": "klibhyaṁ mā sma gamaḥ pārtha naitattvayyupapadyate | kṣudraṁ hṛdayadaurbalyaṁ tyaktvottiṣṭha parantapa ||",
+                "translation_en": "The Supreme Lord said: My dear Arjuna, how have these impurities come upon you? They are not at all befitting a man who knows the value of life. They lead not to higher planets but to infamy.",
+                "order_index": 1
+            },
+            {
+                "ref": "2.12",
+                "sanskrit": "न त्वेवाहं जातु नासं न त्वं नेमे जनाधिपाः । न चैव न भविष्यामः सर्वे वयमतः परम् ॥",
+                "transliteration": "na tv evāhaṁ jātu nāsaṁ na tvaṁ neme janādhipāḥ | na caiva na bhaviṣyāmaḥ sarve vayamataḥ param ||",
+                "translation_en": "Never was there a time when I did not exist, nor you, nor all these kings; nor in the future shall any of us cease to be.",
+                "order_index": 2
+            },
+            {
+                "ref": "2.13",
+                "sanskrit": "देहिनोऽस्मिन्यथा देहे कौमारं यौवनं जरा । तथा देहान्तरप्राप्तिर्धीरस्तत्र न मुह्यति ॥",
+                "transliteration": "dehino 'smin yathā dehe kaumāraṁ yauvanaṁ jarā | tathā dehāntara prāptir dhīras tatra na muhyati ||",
+                "translation_en": "As the embodied soul continuously passes, in this body, from boyhood to youth to old age, the soul similarly passes into another body at death. A sober person is not bewildered by such a change.",
+                "order_index": 3
+            },
+            {
+                "ref": "2.14",
+                "sanskrit": "मात्रास्पर्शास्तु कौन्तेय शीतोष्णसुखदुःखदाः । आगमापायिनोऽनित्यास्तांस्तितिक्षस्व भारत ॥",
+                "transliteration": "mātrāsparśās tu kaunteya śītoṣṇa sukha duḥkha dāḥ | āgamāpāyino 'anityās tāṁs titikṣasva bhārata ||",
+                "translation_en": "O son of Kunti, the contact between the senses and the sense objects gives rise to fleeting perceptions of happiness and distress. These are non-permanent, and come and go like the winter and summer seasons. O descendent of Bharat, one must learn to tolerate them without being disturbed.",
+                "order_index": 4
+            },
+            {
+                "ref": "2.20",
+                "sanskrit": "न जायते म्रियते वा कदाचिन्नायं भूत्वा भविता वा न भूयः । अजो नित्यः शाश्वतोऽयं पुराणो न हन्यते हन्यमाने शरीरे ॥",
+                "transliteration": "na jāyate mriyate vā kadācin nāyaṁ bhūtvā bhavitā vā na bhūyaḥ | aja nityaḥ śāśvato 'yaṁ purāṇo na hanyate hanyamāne śarīre ||",
+                "translation_en": "For the soul there is never birth nor death. Nor, having once been, does he ever cease to be. He is unborn, eternal, ever-existing, primeval. He is not slain when the body is slain.",
+                "order_index": 5
+            },
+            {
+                "ref": "2.47",
+                "sanskrit": "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन । मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि ॥",
+                "transliteration": "karmaṇy evādhikāraste mā phaleṣu kadācana | mā karmaphalahetur bhūr mā te saṅgo 'stvakarmaṇi ||",
+                "translation_en": "You have a right to perform your prescribed duty, but you are not entitled to the fruits of action. Never consider yourself the cause of the results of your activities, and never be attached to not doing your duty.",
+                "order_index": 6
+            },
+            {
+                "ref": "2.48",
+                "sanskrit": "योगस्थः कुरु कर्माणि सङ्गं त्यक्त्वा धनञ्जय । सिद्ध्यसिद्ध्योः समो भूत्वा समत्वं योग उच्यते ॥",
+                "transliteration": "yogasthaḥ kuru karmāṇi saṅgaṁ tyaktvā dhanañjaya | siddhyasiddhyoḥ samo bhūtvā samatvaṁ yoga ucyate ||",
+                "translation_en": "Perform your prescribed duty, O Arjuna, abandoning attachment to success or failure. Such equanimity is called yoga.",
+                "order_index": 7
+            }
+        ]
+    },
+    {
+        "slug": "yoga-sutras",
+        "title_en": "Yoga Sutras of Patanjali",
+        "title_sa": "पतञ्जलि योगसूत्र",
+        "category": "Yoga",
+        "tradition": "Classical",
+        "difficulty": "intermediate",
+        "description": "The foundational text of Yoga philosophy, compiled by sage Patanjali. It outlines the eight limbs (Ashtanga Yoga) and provides a systematic approach to spiritual liberation through the practice of yoga.",
+        "verses": [
+            {
+                "ref": "1.1",
+                "sanskrit": "अथ योगानुशासनम् ॥",
+                "transliteration": "atha yoga-anuśāsanam",
+                "translation_en": "Now, the exposition of yoga.",
+                "order_index": 1
+            },
+            {
+                "ref": "1.2",
+                "sanskrit": "योगश्चित्तवृत्तिनिरोधः ॥",
+                "transliteration": "yogaścitta-vṛtti-nirodhaḥ",
+                "translation_en": "Yoga is the restraint of the modifications of the mind-stuff.",
+                "order_index": 2
+            },
+            {
+                "ref": "1.3",
+                "sanskrit": "तदा दृष्टुः स्वरूपेऽवस्थानम् ॥",
+                "transliteration": "tadā dṛṣṭuḥ svarūpe 'vasthānam",
+                "translation_en": "Then the Seer (Self) abides in Its own nature.",
+                "order_index": 3
+            },
+            {
+                "ref": "1.4",
+                "sanskrit": "वृत्तिसारूप्यमितरत्र ॥",
+                "transliteration": "vṛtti-sārūpyam itaratra",
+                "translation_en": "At other times, the Seer appears to assume the form of the modifications of the mind.",
+                "order_index": 4
+            },
+            {
+                "ref": "1.12",
+                "sanskrit": "अभ्यासवैराग्याभ्यां तन्निरोधः ॥",
+                "transliteration": "abhyāsa-vairāgyābhyāṁ tannirodhaḥ",
+                "translation_en": "Their control is by practice and non-attachment.",
+                "order_index": 5
+            },
+            {
+                "ref": "1.13",
+                "sanskrit": "तत्र स्थितौ यत्नोऽभ्यासः ॥",
+                "transliteration": "tatra sthitau yatno 'bhyāsaḥ",
+                "translation_en": "Of these two, effort toward steadiness of mind is practice.",
+                "order_index": 6
+            },
+            {
+                "ref": "1.14",
+                "sanskrit": "स तु दीर्घकालनैरन्तर्यसत्कारासेवितो दृढभूमिः ॥",
+                "transliteration": "sa tu dīrgha-kāla-nairantarya-satkārāsevito dṛḍha-bhūmiḥ",
+                "translation_en": "It becomes firmly grounded when well attended to for a long time, without break and with all earnestness.",
+                "order_index": 7
+            },
+            {
+                "ref": "1.15",
+                "sanskrit": "दृष्टानुश्रविकविषयवितृष्णस्य वशीकारसंज्ञा वैराग्यम् ॥",
+                "transliteration": "dṛṣṭa-anuśravika-viṣaya-vitṛṇṣasya vaśīkāra-saṁjñā vairāgyam",
+                "translation_en": "When the mind loses all desire for objects seen or heard about, it acquires a state of mastery called non-attachment.",
+                "order_index": 8
+            }
+        ]
+    },
+    {
+        "slug": "mandukya-upanishad",
+        "title_en": "Mandukya Upanishad",
+        "title_sa": "माण्डूक्योपनिषत्",
+        "category": "Upanishad",
+        "tradition": "Advaita",
+        "difficulty": "advanced",
+        "description": "The shortest of Upanishads, consisting of just 12 verses. It expounds the four states of consciousness (waking, dreaming, deep sleep, and turiya) and the syllable Om as the representation of Brahman.",
+        "verses": [
+            {
+                "ref": "1",
+                "sanskrit": "ॐ इत्येतदक्षरमिदं सर्वं तत्प्रत्यवेशानमित्युपासितं य एवं वेद य एवं वेदापि य एवं वेदापि ॥",
+                "transliteration": "om ity etad akṣaram idaṁ sarvaṁ tat pratyaveśānam ity upāsitaṁ ya evaṁ veda ya evaṁ vedāpi ya evaṁ vedāpi ya evaṁ vedāpi",
+                "translation_en": "Om! This syllable is all this. A further explanation of it is: what was, what is, and what will be is all Om. And whatever else is beyond the three times, that also is Om.",
+                "order_index": 1
+            },
+            {
+                "ref": "2",
+                "sanskrit": "सर्वं ह्येतद्ब्रह्मायमात्मा ब्रह्मायमात्मा अन्तः प्रज्ञा अन्तः प्रज्ञा ॥",
+                "transliteration": "sarvaṁ hy etad brahmāyamātmā brahmāyamātmā antaḥ prajñā antaḥ prajñā",
+                "translation_en": "All this is indeed Brahman. This Self is Brahman. This Self has four quarters.",
+                "order_index": 2
+            },
+            {
+                "ref": "3",
+                "sanskrit": "जागरितस्थानो बहिष्प्रज्ञः सप्ताङ्ग एकोनविंशतिमुखः स्थूलभुक्वैश्वानिरो वैश्वानरः प्रथमः पादः ॥",
+                "transliteration": "jāgarita-sthāno bāhiṣprajñaḥ saptāṅga eko-naviṁśati-mukhaḥ sthūla-bhuk vaiśvānaro vaiśvānaraḥ prathamaḥ pādaḥ",
+                "translation_en": "The first quarter is Vaisvanara, whose sphere of activity is the waking state, who is conscious of external objects, who has seven limbs and nineteen mouths, and who is the experiencer of gross objects.",
+                "order_index": 3
+            },
+            {
+                "ref": "4",
+                "sanskrit": "स्वप्नस्थानोऽन्तःप्रज्ञः सप्ताङ्ग एकोनविंशतिमुखः प्रविविक्तभुक्तैजसो द्वितीयः पादः ॥",
+                "transliteration": "svapna-sthāno 'ntaḥprajñaḥ saptāṅga eko-naviṁśati-mukhaḥ pravivikta-bhuk taijasaḥ dvitīyaḥ pādaḥ",
+                "translation_en": "The second quarter is Taijasa, whose sphere of activity is the dream state, who is conscious of internal objects, who has seven limbs and nineteen mouths, and who is the experiencer of subtle objects.",
+                "order_index": 4
+            },
+            {
+                "ref": "5",
+                "sanskrit": "यदा सुप्ते न कञ्चिद्भवति न च भवति न कश्चिद्भवति न च भवति न कश्चिद्भवति न च भवति ॥",
+                "transliteration": "yā supte na kañcid bhavati na ca bhavati na kaścid bhavati na ca bhavati",
+                "translation_en": "Where one asleep desires no desires whatsoever and sees no dreams, that is deep sleep.",
+                "order_index": 5
+            },
+            {
+                "ref": "6",
+                "sanskrit": "सुषुप्तस्थानोऽभिप्रज्ञः एकीभूतः प्रज्ञानघन एवानन्दघनो ह्यानन्दमयो ह्यानन्दभुक्चेतोमुखः तृतीयः पादः ॥",
+                "transliteration": "suṣupta-sthāno 'bhijñāna eikībhūtaḥ prajñā-ghana evānanda-ghano hyānanda-mayo hyānanda-bhuk ceto-mukhaḥ tṛtīyaḥ pādaḥ",
+                "translation_en": "The third quarter is Prajna, whose sphere is deep sleep, in whom all experiences become one, who is verily a mass of consciousness, who is full of bliss and who experiences bliss, and who is the doorway to experiencing and knowing.",
+                "order_index": 6
+            },
+            {
+                "ref": "7",
+                "sanskrit": "एष सर्वेश्वर एष सर्वज्ञ एषोऽन्तर्याम्येष योनिः सर्वस्य प्रभवाप्ययौ हि भूतानाम् ॥",
+                "transliteration": "eṣa sarveśvara eṣa sarvajña eṣo 'ntaryāmy eṣa yoniḥ sarvasya prabhavāpyayau hi bhūtānām",
+                "translation_en": "This is the Lord of all, this is all-knowing, this is the inner controller, this is the source of all, for this is the origin and end of beings.",
+                "order_index": 7
+            }
+        ]
+    },
+    {
+        "slug": "isha-upanishad",
+        "title_en": "Isha Upanishad",
+        "title_sa": "ईशोपनिषत्",
+        "category": "Upanishad",
+        "tradition": "Advaita",
+        "difficulty": "beginner",
+        "description": "One of the shortest Upanishads with just 18 verses. It teaches that the Supreme Being pervades everything and that one should live in the world without attachment, performing one's duties as an offering to the Divine.",
+        "verses": [
+            {
+                "ref": "1",
+                "sanskrit": "पूर्णमदः पूर्णमिदं पूर्णात्पूर्णमुदच्यते । पूर्णस्य पूर्णमादाय पूर्णमेवावशिष्यते ॥",
+                "transliteration": "pūrṇam adaḥ pūrṇam idaṁ pūrṇāt pūrṇam udacyate | pūrṇasya pūrṇam ādāya pūrṇam evāvaśiṣyate ||",
+                "translation_en": "That is full, this is full. From fullness, fullness comes forth. Taking fullness from fullness, fullness indeed remains.",
+                "order_index": 1
+            },
+            {
+                "ref": "2",
+                "sanskrit": "ईशावास्यमिदं सर्वं यत्किञ्चित्जगत्यां जगत् । तेन त्यक्तेन भुञ्जीथा मा गृढः कस्यस्विद्धनम् ॥",
+                "transliteration": "īśāvāsyam idaṁ sarvaṁ yat kiñcid jagatyāṁ jagat | tena tyaktena bhuñjīthā mā gṛḍhaḥ kasyasvid dhanam ||",
+                "translation_en": "All this, whatsoever moves on the earth, is covered by the Lord. Renounce it and enjoy it. Do not covet the wealth of anyone.",
+                "order_index": 2
+            }
+        ]
+    }
+]

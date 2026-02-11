@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand Core Colors: Ink + Parchment + Saffron + Stone */
+    --ink-900: 45 24% 25%;
+    /* #2D2A3D */
+    --ink-800: 358 8% 39%;
+    /* #635B60 */
+    --neutral-700: 0 0% 40%;
+    /* #666464 */
+    --neutral-500: 0 0% 55%;
+    /* #8C868B */
+    --parchment-50: 20 7% 98%;
+    /* #FEF7F4 */
+    --parchment-100: 25 6% 89%;
+    /* #F7EAE2 */
+    --stone-200: 22 21% 84%;
+    /* #E7D4C9 */
+    --stone-300: 17 14% 73%;
+    /* #CEBEB6 */
+    --saffron-500: 21 57% 63%;
+    /* #D89569 */
+    --saffron-700: 15 42% 51%;
+    /* #A07461 */
+
+    /* Legacy HSL variables for backward compatibility */
+    --background: 20 7% 98%;
+    --foreground: 45 24% 25%;
+    --card: 20 7% 98%;
+    --card-foreground: 45 24% 25%;
+    --popover: 20 7% 98%;
+    --popover-foreground: 45 24% 25%;
+    --primary: 45 24% 25%;
+    --primary-foreground: 20 7% 98%;
+    --secondary: 25 6% 89%;
+    --secondary-foreground: 45 24% 25%;
+    --muted: 25 6% 89%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 21 57% 63%;
+    --accent-foreground: 20 7% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 22 21% 84%;
+    --input: 17 14% 73%;
+    --ring: 21 57% 63%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark mode: "ink paper at night" */
+    --parchment-50: 240 13% 11%;
+    /* #1D1B28 */
+    --parchment-100: 247 15% 20%;
+    /* #262434 */
+    --ink-900: 20 7% 98%;
+    /* Flip to parchment as text */
+    --ink-800: 25 6% 89%;
+    --neutral-700: 17 14% 73%;
+    --neutral-500: 0 0% 55%;
+    --stone-200: 251 20% 31%;
+    /* #423F4F */
+    --stone-300: 251 18% 32%;
+    /* #534A52 */
+    --saffron-500: 21 57% 63%;
+    /* Keep accent same */
+    --saffron-700: 15 42% 51%;
+
+    /* Legacy HSL variables for dark mode */
+    --background: 240 13% 11%;
+    --foreground: 20 7% 98%;
+    --card: 247 15% 20%;
+    --card-foreground: 20 7% 98%;
+    --popover: 247 15% 20%;
+    --popover-foreground: 20 7% 98%;
+    --primary: 20 7% 98%;
+    --primary-foreground: 240 13% 11%;
+    --secondary: 247 15% 20%;
+    --secondary-foreground: 20 7% 98%;
+    --muted: 247 15% 20%;
+    --muted-foreground: 17 14% 73%;
+    --accent: 21 57% 63%;
+    --accent-foreground: 240 13% 11%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 251 20% 31%;
+    --input: 251 18% 32%;
+    --ring: 21 57% 63%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Focus visible styles for better keyboard navigation */
+  *:focus-visible {
+    outline: 2px solid #D89569;
+    outline-offset: 2px;
+  }
+
+  /* Skip to main content link for accessibility */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #2D2A3D;
+    color: #FEF7F4;
+    padding: 8px 16px;
+    z-index: 100;
+    transition: top 0.3s;
+  }
+
+  .skip-link:focus {
+    top: 0;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
