@@ -21,7 +21,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         const sizeStyles = {
             sm: "px-4 py-2 text-sm rounded-md",
             md: "px-6 py-2.5 text-sm rounded-lg",
-            lg: "px-8 py-4 text-base rounded-lg",
+            lg: "px-6 py-2.5 text-sm rounded-lg",
         };
 
         return (

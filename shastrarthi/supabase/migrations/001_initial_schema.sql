@@ -137,8 +137,11 @@ CREATE POLICY "Users can delete notes" ON notes
 CREATE POLICY "Users can view own progress" ON reading_progress
     FOR SELECT USING (auth.uid() = user_id);
 
+CREATE POLICY "Users can create own progress" ON reading_progress
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
 CREATE POLICY "Users can update own progress" ON reading_progress
-    FOR UPSERT USING (auth.uid() = user_id);
+    FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- Texts and verses are public (no RLS needed for reading)
 -- But we can add policies if needed for future features

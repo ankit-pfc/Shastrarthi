@@ -1,0 +1,88 @@
+import { NextRequest, NextResponse } from "next/server";
+import { requireUser } from "@/lib/server-supabase";
+
+interface RouteContext {
+    params: { id: string };
+}
+
+export async function GET(_request: NextRequest, { params }: RouteContext) {
+    try {
+        const { supabase, user } = await requireUser();
+        const threadId = params.id;
+
+        const { data: thread } = await (supabase as any)
+            .from("chat_threads")
+            .select("id, title, agent, created_at, updated_at")
+            .eq("id", threadId)
+            .eq("user_id", user.id)
+            .single();
+
+        if (!thread) {
+            return NextResponse.json({ error: "Thread not found" }, { status: 404 });
+        }
+
+        const { data: messages, error } = await (supabase as any)
+            .from("chat_messages")
+            .select("id, role, content, created_at")
+            .eq("thread_id", threadId)
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: true });
+
+        if (error) {
+            console.error("GET /api/chat/threads/[id] failed:", error);
+            return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
+        }
+
+        return NextResponse.json({ data: { thread, messages: messages ?? [] } });
+    } catch (error) {
+        if (error instanceof Error && error.message === "UNAUTHORIZED") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        console.error("GET /api/chat/threads/[id] unexpected error:", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
+}
+
+export async function POST(request: NextRequest, { params }: RouteContext) {
+    try {
+        const { supabase, user } = await requireUser();
+        const threadId = params.id;
+        const body = await request.json();
+        const role = body?.role as "user" | "assistant" | undefined;
+        const content = body?.content as string | undefined;
+
+        if (!role || !content?.trim()) {
+            return NextResponse.json({ error: "Missing role or content" }, { status: 400 });
+        }
+
+        const { data, error } = await (supabase as any)
+            .from("chat_messages")
+            .insert({
+                thread_id: threadId,
+                user_id: user.id,
+                role,
+                content: content.trim(),
+            })
+            .select("id, role, content, created_at")
+            .single();
+
+        if (error) {
+            console.error("POST /api/chat/threads/[id] failed:", error);
+            return NextResponse.json({ error: "Failed to save message" }, { status: 500 });
+        }
+
+        await (supabase as any)
+            .from("chat_threads")
+            .update({ updated_at: new Date().toISOString() })
+            .eq("id", threadId)
+            .eq("user_id", user.id);
+
+        return NextResponse.json({ data });
+    } catch (error) {
+        if (error instanceof Error && error.message === "UNAUTHORIZED") {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        console.error("POST /api/chat/threads/[id] unexpected error:", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
+}

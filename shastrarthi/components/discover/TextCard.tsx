@@ -99,7 +99,7 @@ export default function TextCard({
 
     return (
         <Link
-            href={`/reader/${slug}`}
+            href={`/app/reader/${slug}`}
             className={cn(
                 "group block bg-white rounded-xl shadow-sm border border-gray-200",
                 "hover:shadow-lg hover:border-orange-400 hover:-translate-y-1",

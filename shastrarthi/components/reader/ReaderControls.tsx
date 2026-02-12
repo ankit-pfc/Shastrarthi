@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Sun, Moon, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -9,30 +9,40 @@ interface ReaderControlsProps {
     title: string;
     sanskritTitle?: string | null;
     category: string;
+    backHref?: string;
+    isDark: boolean;
+    fontSize: "small" | "medium" | "large";
+    onThemeToggle: () => void;
+    onFontSizeChange: (size: "small" | "medium" | "large") => void;
 }
 
 export default function ReaderControls({
     title,
     sanskritTitle,
     category,
+    backHref = "/app/discover",
+    isDark,
+    fontSize,
+    onThemeToggle,
+    onFontSizeChange,
 }: ReaderControlsProps) {
-    const [isDark, setIsDark] = useState(false);
-    const [fontSize, setFontSize] = useState<"small" | "medium" | "large">("medium");
+    useEffect(() => {
+        document.documentElement.classList.toggle("dark", isDark);
+        localStorage.setItem("reader-theme", isDark ? "dark" : "light");
+    }, [isDark]);
 
-    const toggleTheme = () => {
-        setIsDark(!isDark);
-        document.documentElement.classList.toggle("dark");
-        // TODO: Save theme preference to localStorage
-    };
+    useEffect(() => {
+        localStorage.setItem("reader-font-size", fontSize);
+    }, [fontSize]);
 
     const increaseFontSize = () => {
-        if (fontSize === "small") setFontSize("medium");
-        else if (fontSize === "medium") setFontSize("large");
+        if (fontSize === "small") onFontSizeChange("medium");
+        else if (fontSize === "medium") onFontSizeChange("large");
     };
 
     const decreaseFontSize = () => {
-        if (fontSize === "large") setFontSize("medium");
-        else if (fontSize === "medium") setFontSize("small");
+        if (fontSize === "large") onFontSizeChange("medium");
+        else if (fontSize === "medium") onFontSizeChange("small");
     };
 
     const getFontSizeClass = () => {
@@ -52,7 +62,7 @@ export default function ReaderControls({
                 <div className="flex items-center justify-between gap-4">
                     {/* Back Button */}
                     <Link
-                        href="/discover"
+                        href={backHref}
                         className="flex items-center gap-2 text-sand-700 dark:text-sand-300 hover:text-saffron-600 dark:hover:text-saffron-400 transition-colors"
                     >
                         <ArrowLeft className="h-5 w-5" />
@@ -95,7 +105,7 @@ export default function ReaderControls({
 
                         {/* Theme Toggle */}
                         <button
-                            onClick={toggleTheme}
+                            onClick={onThemeToggle}
                             className="p-2 rounded-md text-sand-700 dark:text-sand-300 hover:bg-sand-100 dark:hover:bg-sand-700 transition-colors"
                             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
                         >

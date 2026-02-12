@@ -5,11 +5,24 @@ import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { APP_NAV_ITEMS, RECENT_CHATS } from "@/lib/config/nav";
+import { APP_NAV_ITEMS } from "@/lib/config/nav";
+import { supabase } from "@/lib/supabase";
+
+interface ThreadSummary {
+    id: string;
+    title: string;
+}
+
+interface SidebarUser {
+    name: string;
+    email: string;
+}
 
 export default function Sidebar() {
     const pathname = usePathname();
     const [collapsed, setCollapsed] = useState(false);
+    const [recentThreads, setRecentThreads] = useState<ThreadSummary[]>([]);
+    const [userInfo, setUserInfo] = useState<SidebarUser | null>(null);
 
     useEffect(() => {
         const saved = window.localStorage.getItem("shastrarthi.sidebar.collapsed");
@@ -29,6 +42,79 @@ export default function Sidebar() {
             setCollapsed(true);
         }
     }, [isReader]);
+
+    useEffect(() => {
+        const loadRecentThreads = async () => {
+            try {
+                const response = await fetch("/api/chat/threads");
+                if (!response.ok) {
+                    setRecentThreads([]);
+                    return;
+                }
+
+                const payload = (await response.json()) as {
+                    data?: Array<{ id?: string; title?: string }>;
+                };
+                const threads = (payload.data ?? [])
+                    .filter((item): item is { id: string; title: string } => Boolean(item.id && item.title))
+                    .slice(0, 8);
+                setRecentThreads(threads);
+            } catch (error) {
+                console.error("Failed loading recent threads:", error);
+                setRecentThreads([]);
+            }
+        };
+
+        void loadRecentThreads();
+    }, []);
+
+    useEffect(() => {
+        const loadUser = async () => {
+            try {
+                const {
+                    data: { user },
+                } = await supabase.auth.getUser();
+
+                if (!user) {
+                    setUserInfo(null);
+                    return;
+                }
+
+                let profileName: string | null = null;
+                const { data: profile } = await supabase
+                    .from("profiles")
+                    .select("name")
+                    .eq("id", user.id)
+                    .maybeSingle();
+                profileName = profile?.name ?? null;
+
+                const fallbackName =
+                    (typeof user.user_metadata?.name === "string" && user.user_metadata.name) ||
+                    user.email?.split("@")[0] ||
+                    "User";
+
+                setUserInfo({
+                    name: profileName || fallbackName,
+                    email: user.email ?? "No email",
+                });
+            } catch (error) {
+                console.error("Failed loading user info:", error);
+                setUserInfo(null);
+            }
+        };
+
+        void loadUser();
+    }, []);
+
+    const userInitials = useMemo(() => {
+        const source = userInfo?.name || userInfo?.email || "User";
+        return source
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((part) => part[0]?.toUpperCase() ?? "")
+            .join("");
+    }, [userInfo]);
 
     return (
         <aside
@@ -111,15 +197,19 @@ export default function Sidebar() {
                             Recent Chats
                         </p>
                         <div className="space-y-0.5">
-                            {RECENT_CHATS.map((chat) => (
-                                <Link
-                                    key={chat}
-                                    href={`/app/chat?q=${encodeURIComponent(chat)}`}
-                                    className="block rounded-lg px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 truncate"
-                                >
-                                    {chat}
-                                </Link>
-                            ))}
+                            {recentThreads.length > 0 ? (
+                                recentThreads.map((chat) => (
+                                    <Link
+                                        key={chat.id}
+                                        href={`/app/chat/${chat.id}`}
+                                        className="block rounded-lg px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 truncate"
+                                    >
+                                        {chat.title}
+                                    </Link>
+                                ))
+                            ) : (
+                                <p className="px-3 py-1.5 text-sm text-gray-400">No recent chats yet.</p>
+                            )}
                         </div>
                     </div>
                 )}
@@ -129,12 +219,12 @@ export default function Sidebar() {
             <div className={cn("border-t border-gray-100 px-3 py-2.5", collapsed && "flex justify-center")}>
                 {!collapsed ? (
                     <div>
-                        <p className="text-sm font-medium text-gray-900">Ankit Mishra</p>
-                        <p className="text-xs text-gray-400 truncate">ankit.m309@gmail.com</p>
+                        <p className="text-sm font-medium text-gray-900">{userInfo?.name ?? "Guest"}</p>
+                        <p className="text-xs text-gray-400 truncate">{userInfo?.email ?? "Not signed in"}</p>
                     </div>
                 ) : (
                     <div className="h-7 w-7 rounded-full bg-orange-100 text-orange-700 grid place-items-center text-[10px] font-semibold">
-                        AM
+                        {userInitials || "U"}
                     </div>
                 )}
             </div>

@@ -22,10 +22,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const setAuthFlagCookie = (isAuthenticated: boolean) => {
+            if (isAuthenticated) {
+                document.cookie = "sb-local-auth-token=1; path=/; max-age=2592000; samesite=lax";
+            } else {
+                document.cookie = "sb-local-auth-token=; path=/; max-age=0; samesite=lax";
+            }
+        };
+
         // Get initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
             setUser(session?.user ?? null);
+            setAuthFlagCookie(!!session?.user);
             setLoading(false);
         });
 
@@ -35,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
+            setAuthFlagCookie(!!session?.user);
             setLoading(false);
         });
 

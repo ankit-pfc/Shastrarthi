@@ -5,6 +5,7 @@ import { useState } from "react";
 export default function SimplifierPage() {
     const [input, setInput] = useState("");
     const [output, setOutput] = useState("Simplified output will appear here.");
+    const [isLoading, setIsLoading] = useState(false);
 
     return (
         <div className="space-y-4">
@@ -26,10 +27,28 @@ export default function SimplifierPage() {
                 </section>
             </div>
             <button
-                onClick={() => setOutput("This passage discusses disciplined action without attachment, emphasizing inner steadiness over outcomes.")}
-                className="px-4 py-2 rounded-md bg-orange-600 hover:bg-orange-700 text-white"
+                onClick={async () => {
+                    try {
+                        setIsLoading(true);
+                        const response = await fetch("/api/tools", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                mode: "simplify",
+                                payload: { input },
+                            }),
+                        });
+                        if (!response.ok) return;
+                        const payload = await response.json();
+                        setOutput(payload.data.content ?? output);
+                    } finally {
+                        setIsLoading(false);
+                    }
+                }}
+                disabled={isLoading}
+                className="px-4 py-2 rounded-md bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white"
             >
-                Simplify
+                {isLoading ? "Simplifying..." : "Simplify"}
             </button>
         </div>
     );

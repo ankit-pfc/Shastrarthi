@@ -1,44 +1,96 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Bookmark, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import NoteModal from "./NoteModal";
 
 interface VerseDisplayProps {
-    ref: string;
+    verseRef: string;
     sanskrit: string | null;
     transliteration: string | null;
     translation: string;
     verseId: string;
+    isInitiallyBookmarked?: boolean;
+    onBookmarkChange?: (verseId: string, isBookmarked: boolean) => void;
 }
 
 export default function VerseDisplay({
-    ref: verseRef,
+    verseRef,
     sanskrit,
     transliteration,
     translation,
     verseId,
+    isInitiallyBookmarked = false,
+    onBookmarkChange,
 }: VerseDisplayProps) {
     const [showSanskrit, setShowSanskrit] = useState(true);
     const [showTransliteration, setShowTransliteration] = useState(true);
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(isInitiallyBookmarked);
     const [isExpanded, setIsExpanded] = useState(false);
 
-    const toggleBookmark = () => {
-        setIsBookmarked(!isBookmarked);
-        // TODO: Implement actual bookmark functionality
+    const toggleBookmark = async () => {
+        try {
+            if (isBookmarked) {
+                const response = await fetch("/api/bookmarks", {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ verseId }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed removing bookmark");
+                }
+
+                setIsBookmarked(false);
+                onBookmarkChange?.(verseId, false);
+                return;
+            }
+
+            const response = await fetch("/api/bookmarks", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ verseId }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed creating bookmark");
+            }
+
+            setIsBookmarked(true);
+            onBookmarkChange?.(verseId, true);
+        } catch (error) {
+            console.error("toggleBookmark failed:", error);
+        }
     };
 
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+
+    useEffect(() => {
+        setIsBookmarked(isInitiallyBookmarked);
+    }, [isInitiallyBookmarked, verseId]);
 
     const toggleNote = () => {
         setIsNoteModalOpen(true);
     };
 
-    const handleSaveNote = (content: string) => {
-        console.log("Saving note for verse:", verseId, "Content:", content);
-        // TODO: Implement actual note saving to database
+    const handleSaveNote = async (content: string) => {
+        try {
+            const response = await fetch("/api/notes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    verseId,
+                    content,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed saving note");
+            }
+        } catch (error) {
+            console.error("Saving note failed:", error);
+        }
     };
 
     return (

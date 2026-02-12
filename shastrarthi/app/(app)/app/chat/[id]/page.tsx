@@ -5,6 +5,6 @@ interface ChatThreadPageProps {
 }
 
 export default function ChatThreadPage({ params }: ChatThreadPageProps) {
-    const title = decodeURIComponent(params.id).replace(/-/g, " ");
-    return <ChatInterface initialTitle={title} />;
+    const title = "Saved conversation";
+    return <ChatInterface initialTitle={title} initialThreadId={params.id} />;
 }

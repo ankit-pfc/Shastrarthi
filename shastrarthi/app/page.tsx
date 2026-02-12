@@ -4,7 +4,7 @@ import IntentBuilder from "@/components/landing/IntentBuilder";
 import PopularTasks from "@/components/landing/PopularTasks";
 import FeaturedTexts from "@/components/landing/FeaturedTexts";
 import HowItWorks from "@/components/landing/HowItWorks";
-import Pricing from "@/components/landing/Pricing";
+// import Pricing from "@/components/landing/Pricing";
 import FAQ from "@/components/landing/FAQ";
 import Footer from "@/components/landing/Footer";
 
@@ -18,7 +18,7 @@ export default function Home() {
                 <PopularTasks />
                 <FeaturedTexts />
                 <HowItWorks />
-                <Pricing />
+                {/* <Pricing /> */}
                 <FAQ />
                 <Footer />
             </div>

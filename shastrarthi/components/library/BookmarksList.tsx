@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Bookmark, FileText, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface BookmarkItem {
     id: string;
@@ -39,7 +38,7 @@ export default function BookmarksList({ bookmarks, onRemove }: { bookmarks: any[
                                     <Bookmark className="h-5 w-5 text-saffron-600 dark:text-saffron-400" />
                                     <div className="flex-1 min-w-0">
                                         <Link
-                                            href={`/reader/${bookmark.textSlug}`}
+                                            href={`/app/reader/${bookmark.textSlug}`}
                                             className="group"
                                         >
                                             <h4 className="text-base font-semibold text-sand-900 dark:text-sand-100 group-hover:text-saffron-600 dark:group-hover:text-saffron-400 transition-colors line-clamp-1">

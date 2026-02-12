@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { Mail, Lock, User, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { useAuth } from "./AuthProvider";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface AuthFormProps {
     mode: "login" | "signup";
@@ -15,7 +17,8 @@ interface ValidationErrors {
 }
 
 export default function AuthForm({ mode }: AuthFormProps) {
-    const { signIn, signUp, signInWithGoogle } = useAuth();
+    const { signIn, signUp, signInWithGoogle, user, loading: authLoading } = useAuth();
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
@@ -32,6 +35,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
             return () => clearTimeout(timer);
         }
     }, [success]);
+
+    useEffect(() => {
+        if (!authLoading && user) {
+            router.push("/app");
+            router.refresh();
+        }
+    }, [authLoading, user, router]);
 
     const validateEmail = (email: string): string | undefined => {
         if (!email) return "Email is required";
@@ -132,15 +142,15 @@ export default function AuthForm({ mode }: AuthFormProps) {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-orange-50/30 to-orange-100/50 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-orange-50/30 to-orange-100/50 px-4 py-8">
             <div className="w-full max-w-md">
-                <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-7 md:p-8">
                     {/* Header */}
-                    <div className="text-center mb-8">
-                        <h1 className="text-h2 font-semibold font-serif text-gray-900 mb-2">
+                    <div className="text-center mb-7">
+                        <h1 className="text-3xl md:text-4xl font-semibold font-serif text-gray-900 mb-1.5">
                             {mode === "login" ? "Welcome Back" : "Join Shastrarthi"}
                         </h1>
-                        <p className="text-body/md text-gray-600 leading-relaxed">
+                        <p className="text-base text-gray-600 leading-relaxed">
                             {mode === "login"
                                 ? "Sign in to continue your spiritual journey"
                                 : "Create an account to begin exploring ancient wisdom"}
@@ -164,10 +174,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     )}
 
                     {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-5">
                         {mode === "signup" && (
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5">
                                     Name
                                 </label>
                                 <div className="relative">
@@ -191,7 +201,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                         maxLength={100}
                                         aria-invalid={touched.name && !!validationErrors.name}
                                         aria-describedby={validationErrors.name ? "name-error" : undefined}
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                        className="w-full h-12 pl-10 pr-4 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                     />
                                 </div>
                                 {touched.name && validationErrors.name && (
@@ -203,7 +213,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                         )}
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
                                 Email
                             </label>
                             <div className="relative">
@@ -227,7 +237,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                     autoComplete="email"
                                     aria-invalid={touched.email && !!validationErrors.email}
                                     aria-describedby={validationErrors.email ? "email-error" : undefined}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                    className="w-full h-12 pl-10 pr-4 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                 />
                             </div>
                             {touched.email && validationErrors.email && (
@@ -238,7 +248,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
                                 Password
                             </label>
                             <div className="relative">
@@ -264,7 +274,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                     autoComplete={mode === "login" ? "current-password" : "new-password"}
                                     aria-invalid={touched.password && !!validationErrors.password}
                                     aria-describedby={validationErrors.password ? "password-error" : undefined}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                    className="w-full h-12 pl-10 pr-4 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                 />
                             </div>
                             {touched.password && validationErrors.password && (
@@ -278,7 +288,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full flex h-12 items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? (
                                 <>
@@ -294,45 +304,47 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     </form>
 
                     {/* Divider */}
-                    <div className="relative my-6">
+                    <div className="relative my-7">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-200" />
                         </div>
-                        <span className="relative bg-white px-4 text-sm text-gray-500">
-                            Or continue with
-                        </span>
+                        <div className="relative flex justify-center">
+                            <span className="bg-white px-4 text-sm text-gray-500">
+                                Or continue with
+                            </span>
+                        </div>
                     </div>
 
                     {/* Google Sign In */}
                     <button
                         onClick={handleGoogleSignIn}
                         disabled={loading}
-                        className="w-full flex items-center justify-center gap-3 border border-gray-300 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full flex h-12 items-center justify-center gap-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <svg className="h-5 w-5" viewBox="0 0 24 24">
-                            <path
-                                d="M22.56 12.25c0-1.57-.75-3.38-1.81-6.41a1.84 1.84 0 0 0 1.78c0-3.17.75-6.23 1.81-6.41a1.84 1.84 0 0 0 1.78c0-3.17.75-6.23 1.81-6.41zm-1.81 6.41h-3.64v-5.5h3.64v5.5zm-3.64-5.5c0-1.57.75-3.38 1.81-6.41a1.84 1.84 0 0 0 1.78c0-3.17.75-6.23 1.81-6.41a1.84 1.84 0 0 0 1.78c0-3.17.75-6.23 1.81-6.41zm-1.81 6.41h-3.64v-5.5h3.64v5.5z"
-                                fill="#4285F4"
-                            />
+                            <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.9-5.5 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.5 14.6 2.6 12 2.6A9.4 9.4 0 0 0 2.6 12 9.4 9.4 0 0 0 12 21.4c5.4 0 9-3.8 9-9 0-.6-.1-1.1-.2-1.6H12z" />
+                            <path fill="#34A853" d="M2.6 7.9l3.2 2.3c.9-1.8 2.7-3 5.2-3 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.5 14.6 2.6 12 2.6c-3.6 0-6.8 2-8.4 5.3z" />
+                            <path fill="#FBBC05" d="M12 21.4c2.6 0 4.8-.9 6.4-2.5l-3-2.4c-.8.6-1.8 1-3.4 1-2.5 0-4.6-1.7-5.3-3.9l-3.2 2.5c1.6 3.3 4.9 5.3 8.5 5.3z" />
+                            <path fill="#4285F4" d="M21 12.4c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.1 2.6-2.1 3.5l3 2.4c1.7-1.6 2.6-4 2.6-8.2z" />
                         </svg>
                         <span className="text-gray-700">Google</span>
                     </button>
 
                     {/* Footer Link */}
-                    <p className="mt-6 text-center text-sm text-gray-600">
+                    <p className="mt-7 text-center text-sm text-gray-600">
                         {mode === "login" ? (
                             <>
-                                Don't have an account?{" "}
-                                <a href="/auth/signup" className="text-orange-600 hover:text-orange-700 font-medium">
+                                Don&apos;t have an account?{" "}
+                                <Link href="/auth/signup" className="text-orange-600 hover:text-orange-700 font-medium">
                                     Sign up
-                                </a>
+                                </Link>
                             </>
                         ) : (
                             <>
                                 Already have an account?{" "}
-                                <a href="/auth/login" className="text-orange-600 hover:text-orange-700 font-medium">
+                                <Link href="/auth/login" className="text-orange-600 hover:text-orange-700 font-medium">
                                     Sign in
-                                </a>
+                                </Link>
                             </>
                         )}
                     </p>

@@ -5,6 +5,27 @@ import { useState } from "react";
 export default function ReferencesPage() {
     const [source, setSource] = useState("Bhagavad Gita 2.47");
     const [style, setStyle] = useState("APA");
+    const [citation, setCitation] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    const generateCitation = async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetch("/api/tools", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    mode: "reference",
+                    payload: { source, style },
+                }),
+            });
+            if (!response.ok) return;
+            const payload = await response.json();
+            setCitation(payload.data.content ?? "");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="space-y-4 max-w-3xl">
@@ -27,8 +48,15 @@ export default function ReferencesPage() {
                     <option>Chicago</option>
                     <option>Traditional (Adhyaya.Pada.Shloka)</option>
                 </select>
+                <button
+                    onClick={() => void generateCitation()}
+                    disabled={isLoading}
+                    className="px-4 py-2 rounded-md bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white"
+                >
+                    {isLoading ? "Generating..." : "Generate Citation"}
+                </button>
                 <div className="rounded-lg border border-gray-200 p-3 text-sm text-gray-700">
-                    {style}: {source} — generated citation preview.
+                    {citation || `${style}: ${source} — generated citation preview.`}
                 </div>
             </div>
         </div>

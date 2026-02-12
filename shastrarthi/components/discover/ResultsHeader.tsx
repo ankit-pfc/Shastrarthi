@@ -23,7 +23,7 @@ export default function ResultsHeader({ query, depth }: ResultsHeaderProps) {
     return (
         <div className="flex items-center justify-between">
             <h1 className="text-h3 font-serif font-semibold text-gray-900">
-                Results for "{query}"
+                Results for &quot;{query}&quot;
             </h1>
             <DepthToggle value={depth} onChange={onDepthChange} />
         </div>

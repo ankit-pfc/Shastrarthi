@@ -1,9 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type Notebook = {
+    id: string;
+    title: string;
+    content: string;
+};
 
 export default function AppNotebooksPage() {
-    const [content, setContent] = useState("## Study Notebook\n\nWrite notes, verse links, and comparisons here.");
+    const [notebooks, setNotebooks] = useState<Notebook[]>([]);
+    const [activeNotebookId, setActiveNotebookId] = useState<string | null>(null);
+    const [content, setContent] = useState("");
+    const [title, setTitle] = useState("Study Notebook");
+
+    const loadNotebooks = async () => {
+        const response = await fetch("/api/notebooks");
+        if (!response.ok) return;
+        const payload = await response.json();
+        const rows = payload.data as Notebook[];
+        setNotebooks(rows);
+        if (rows.length > 0) {
+            const current = rows[0];
+            setActiveNotebookId(current.id);
+            setTitle(current.title);
+            setContent(current.content ?? "");
+        }
+    };
+
+    useEffect(() => {
+        void loadNotebooks();
+    }, []);
+
+    const createNotebook = async () => {
+        const response = await fetch("/api/notebooks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: "New Notebook", content: "" }),
+        });
+        if (!response.ok) return;
+        await loadNotebooks();
+    };
+
+    const saveNotebook = async () => {
+        if (!activeNotebookId) return;
+        await fetch(`/api/notebooks/${activeNotebookId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, content }),
+        });
+        await loadNotebooks();
+    };
 
     return (
         <div className="space-y-6">
@@ -14,11 +61,27 @@ export default function AppNotebooksPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-4">
                 <aside className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-                    <h2 className="font-semibold text-gray-900 mb-3">Notebook List</h2>
+                    <div className="flex items-center justify-between mb-3">
+                        <h2 className="font-semibold text-gray-900">Notebook List</h2>
+                        <button
+                            onClick={() => void createNotebook()}
+                            className="text-xs px-2 py-1 rounded border border-gray-200 hover:bg-gray-50"
+                        >
+                            New
+                        </button>
+                    </div>
                     <div className="space-y-2">
-                        {["Advaita Research", "Gita Reflections", "Tantra Vocabulary"].map((name) => (
-                            <button key={name} className="w-full text-left rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                {name}
+                        {notebooks.map((notebook) => (
+                            <button
+                                key={notebook.id}
+                                onClick={() => {
+                                    setActiveNotebookId(notebook.id);
+                                    setTitle(notebook.title);
+                                    setContent(notebook.content ?? "");
+                                }}
+                                className={`w-full text-left rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 ${activeNotebookId === notebook.id ? "border-orange-400 text-orange-700" : "border-gray-200 text-gray-700"}`}
+                            >
+                                {notebook.title}
                             </button>
                         ))}
                     </div>
@@ -26,8 +89,17 @@ export default function AppNotebooksPage() {
 
                 <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
                     <div className="flex items-center justify-between mb-3">
-                        <h2 className="font-semibold text-gray-900">Editor</h2>
-                        <span className="text-xs text-gray-500">Tiptap-ready editable area</span>
+                        <input
+                            value={title}
+                            onChange={(event) => setTitle(event.target.value)}
+                            className="font-semibold text-gray-900 border border-gray-200 rounded px-2 py-1"
+                        />
+                        <button
+                            onClick={() => void saveNotebook()}
+                            className="text-xs px-3 py-1.5 rounded bg-orange-600 hover:bg-orange-700 text-white"
+                        >
+                            Save
+                        </button>
                     </div>
                     <textarea
                         value={content}

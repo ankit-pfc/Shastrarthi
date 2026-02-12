@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { FileText, Trash2, Edit3 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface NoteItem {
     id: string;
@@ -40,7 +39,7 @@ export default function NotesList({ notes, onRemove }: { notes: any[]; onRemove:
                                     <FileText className="h-5 w-5 text-saffron-600 dark:text-saffron-400" />
                                     <div className="flex-1 min-w-0">
                                         <Link
-                                            href={`/reader/${note.textSlug}`}
+                                            href={`/app/reader/${note.textSlug}`}
                                             className="group"
                                         >
                                             <h4 className="text-base font-semibold text-sand-900 dark:text-sand-100 group-hover:text-saffron-600 dark:group-hover:text-saffron-400 transition-colors line-clamp-1">
@@ -78,7 +77,7 @@ export default function NotesList({ notes, onRemove }: { notes: any[]; onRemove:
                                     {new Date(note.createdAt).toLocaleDateString()}
                                 </span>
                                 <Link
-                                    href={`/reader/${note.textSlug}`}
+                                    href={`/app/reader/${note.textSlug}`}
                                     className="text-saffron-600 dark:text-saffron-400 hover:underline"
                                 >
                                     <Edit3 className="h-4 w-4 inline" />

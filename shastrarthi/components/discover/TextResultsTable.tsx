@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import type { Text } from "@/lib/supabase";
 
@@ -6,6 +9,23 @@ interface TextResultsTableProps {
 }
 
 export default function TextResultsTable({ rows }: TextResultsTableProps) {
+    const [savingId, setSavingId] = useState<string | null>(null);
+
+    const saveText = async (textId: string) => {
+        try {
+            setSavingId(textId);
+            await fetch("/api/library", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ textId }),
+            });
+        } catch (error) {
+            console.error("Failed saving text:", error);
+        } finally {
+            setSavingId(null);
+        }
+    };
+
     return (
         <section className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-100 flex flex-wrap items-center justify-between gap-2">
@@ -35,7 +55,13 @@ export default function TextResultsTable({ rows }: TextResultsTableProps) {
                                     <div className="mt-2 flex items-center gap-2">
                                         <Link href={`/app/reader/${row.slug}`} className="text-orange-600 hover:text-orange-700">Read</Link>
                                         <Link href="/app/chat" className="text-orange-600 hover:text-orange-700">Chat</Link>
-                                        <button className="text-gray-500 hover:text-gray-700">Save</button>
+                                        <button
+                                            onClick={() => void saveText(row.id)}
+                                            disabled={savingId === row.id}
+                                            className="text-gray-500 hover:text-gray-700 disabled:opacity-50"
+                                        >
+                                            {savingId === row.id ? "Saving..." : "Save"}
+                                        </button>
                                     </div>
                                 </td>
                                 <td className="p-3 text-gray-700">{row.tradition || "-"}</td>

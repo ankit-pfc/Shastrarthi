@@ -51,7 +51,7 @@ export default function Navbar() {
                             </Link>
                             <Link
                                 href="/auth/signup"
-                                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+                                className="px-4 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-md transition-colors"
                             >
                                 Sign up
                             </Link>
@@ -98,7 +98,7 @@ export default function Navbar() {
                             <Link
                                 href="/auth/signup"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors text-center"
+                                className="px-4 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-md transition-colors text-center"
                             >
                                 Sign up
                             </Link>

@@ -36,3 +36,9 @@ export function hasSupabaseAuthCookie(cookieNames: string[]): boolean {
         return lower.startsWith("sb-") && (lower.includes("auth-token") || lower.includes("access-token"));
     });
 }
+
+export function isLocalhostHost(host: string | null | undefined): boolean {
+    if (!host) return false;
+    const normalized = host.toLowerCase();
+    return normalized.startsWith("localhost:") || normalized === "localhost" || normalized.startsWith("127.0.0.1:");
+}

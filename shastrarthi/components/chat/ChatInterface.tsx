@@ -1,15 +1,25 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BookmarkPlus, Download, MoreHorizontal, Share2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
 
 interface ChatInterfaceProps {
     initialTitle?: string;
+    initialThreadId?: string;
+    agent?: string;
 }
 
-export default function ChatInterface({ initialTitle = "Deep Research Into Shastras" }: ChatInterfaceProps) {
+export default function ChatInterface({
+    initialTitle = "Deep Research Into Shastras",
+    initialThreadId,
+    agent,
+}: ChatInterfaceProps) {
+    const router = useRouter();
+    const [threadId, setThreadId] = useState<string | null>(initialThreadId ?? null);
+    const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([
         {
             role: "assistant",
@@ -20,12 +30,137 @@ export default function ChatInterface({ initialTitle = "Deep Research Into Shast
 
     const title = useMemo(() => initialTitle, [initialTitle]);
 
+    useEffect(() => {
+        if (!initialThreadId) return;
+        const loadThread = async () => {
+            try {
+                const response = await fetch(`/api/chat/threads/${initialThreadId}`);
+                if (!response.ok) return;
+                const payload = await response.json();
+                const loadedMessages = (payload.data?.messages ?? []).map((msg: any) => ({
+                    role: msg.role,
+                    content: msg.content,
+                }));
+                if (loadedMessages.length > 0) {
+                    setMessages(loadedMessages);
+                }
+            } catch (error) {
+                console.error("Failed loading thread:", error);
+            }
+        };
+
+        void loadThread();
+    }, [initialThreadId]);
+
+    const ensureThread = async (firstPrompt: string) => {
+        if (threadId) return threadId;
+        const response = await fetch("/api/chat/threads", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                title: firstPrompt.slice(0, 60),
+                agent,
+            }),
+        });
+        if (!response.ok) {
+            throw new Error("Failed to create thread");
+        }
+        const payload = await response.json();
+        const createdThreadId = payload.data.id as string;
+        setThreadId(createdThreadId);
+        router.replace(`/app/chat/${createdThreadId}`);
+        return createdThreadId;
+    };
+
+    const persistMessage = async (currentThreadId: string, role: "user" | "assistant", content: string) => {
+        await fetch(`/api/chat/threads/${currentThreadId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ role, content }),
+        });
+    };
+
     const onSend = (text: string) => {
-        setMessages((prev) => [
-            ...prev,
-            { role: "user", content: text },
-            { role: "assistant", content: "Thanks. I will structure this by scope, tradition, key sources, and applied interpretation." },
-        ]);
+        const send = async () => {
+            if (isLoading) return;
+            setIsLoading(true);
+
+            try {
+                const currentThreadId = await ensureThread(text);
+                await persistMessage(currentThreadId, "user", text);
+
+                setMessages((prev) => [...prev, { role: "user", content: text }, { role: "assistant", content: "" }]);
+
+                const response = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        query: text,
+                        conversationHistory: messages.slice(-8),
+                    }),
+                });
+
+                if (!response.ok || !response.body) {
+                    throw new Error("Failed to generate response");
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = "";
+                let fullAssistantReply = "";
+                let done = false;
+
+                while (!done) {
+                    const readResult = await reader.read();
+                    done = readResult.done;
+                    buffer += decoder.decode(readResult.value ?? new Uint8Array(), { stream: true });
+                    const chunks = buffer.split("\n\n");
+                    buffer = chunks.pop() ?? "";
+
+                    for (const chunk of chunks) {
+                        const line = chunk.trim();
+                        if (!line.startsWith("data:")) continue;
+                        const data = line.replace(/^data:\s*/, "");
+                        if (data === "[DONE]") {
+                            done = true;
+                            break;
+                        }
+                        const parsed = JSON.parse(data) as { content?: string; error?: string };
+                        if (parsed.error) {
+                            throw new Error(parsed.error);
+                        }
+                        if (parsed.content) {
+                            fullAssistantReply += parsed.content;
+                            setMessages((prev) => {
+                                const next = [...prev];
+                                const last = next.length - 1;
+                                if (last >= 0 && next[last].role === "assistant") {
+                                    next[last] = { role: "assistant", content: `${next[last].content}${parsed.content}` };
+                                }
+                                return next;
+                            });
+                        }
+                    }
+                }
+
+                if (fullAssistantReply.trim()) {
+                    await persistMessage(currentThreadId, "assistant", fullAssistantReply);
+                }
+            } catch (error) {
+                setMessages((prev) => [
+                    ...prev,
+                    {
+                        role: "assistant",
+                        content:
+                            error instanceof Error ? `Unable to answer right now: ${error.message}` : "Unable to answer right now.",
+                    },
+                ]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        void send();
     };
 
     return (

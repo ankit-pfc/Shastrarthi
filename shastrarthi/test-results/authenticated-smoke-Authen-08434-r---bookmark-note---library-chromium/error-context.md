@@ -1,0 +1,108 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - main [ref=e3]:
+    - generic [ref=e4]:
+      - complementary [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - link "Shastrarthi" [ref=e8] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e9]: श
+              - generic [ref=e10]: Shastrarthi
+            - button "Close Sidebar" [ref=e11] [cursor=pointer]:
+              - img [ref=e12]
+          - link "+ New Chat" [ref=e14] [cursor=pointer]:
+            - /url: /app/chat
+        - navigation [ref=e15]:
+          - generic [ref=e16]:
+            - link "Home" [ref=e17] [cursor=pointer]:
+              - /url: /app
+              - img [ref=e18]
+              - generic [ref=e21]: Home
+            - link "My Library" [ref=e22] [cursor=pointer]:
+              - /url: /app/library
+              - img [ref=e23]
+              - generic [ref=e25]: My Library
+            - link "Study Notebooks" [ref=e26] [cursor=pointer]:
+              - /url: /app/notebooks
+              - img [ref=e27]
+              - generic [ref=e30]: Study Notebooks
+            - link "Guru Gallery" [ref=e31] [cursor=pointer]:
+              - /url: /app/gallery
+              - img [ref=e32]
+              - generic [ref=e35]: Guru Gallery
+            - link "Shastra Writer" [ref=e36] [cursor=pointer]:
+              - /url: /app/writer
+              - img [ref=e37]
+              - generic [ref=e40]: Shastra Writer
+            - link "Chat with Text" [ref=e41] [cursor=pointer]:
+              - /url: /app/chat
+              - img [ref=e42]
+              - generic [ref=e44]: Chat with Text
+            - link "Text Discovery" [ref=e45] [cursor=pointer]:
+              - /url: /app/discover
+              - img [ref=e46]
+              - generic [ref=e49]: Text Discovery
+            - link "Explore Topics" [ref=e50] [cursor=pointer]:
+              - /url: /app/topics
+              - img [ref=e51]
+              - generic [ref=e54]: Explore Topics
+            - link "Simplifier" [ref=e55] [cursor=pointer]:
+              - /url: /app/simplifier
+              - img [ref=e56]
+              - generic [ref=e59]: Simplifier
+            - link "Reference Generator" [ref=e60] [cursor=pointer]:
+              - /url: /app/references
+              - img [ref=e61]
+              - generic [ref=e64]: Reference Generator
+            - link "Extract Insights" [ref=e65] [cursor=pointer]:
+              - /url: /app/extract
+              - img [ref=e66]
+              - generic [ref=e68]: Extract Insights
+          - generic [ref=e69]:
+            - paragraph [ref=e70]: Recent Chats
+            - paragraph [ref=e72]: No recent chats yet.
+        - generic [ref=e74]:
+          - paragraph [ref=e75]: Guest
+          - paragraph [ref=e76]: Not signed in
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - navigation [ref=e79]:
+            - link "Home" [ref=e81] [cursor=pointer]:
+              - /url: /app
+            - generic [ref=e82]:
+              - img [ref=e83]
+              - generic [ref=e85]: My Library
+          - generic [ref=e86]:
+            - link "Pricing" [ref=e87] [cursor=pointer]:
+              - /url: /pricing
+            - button "Notifications" [ref=e88] [cursor=pointer]:
+              - img [ref=e89]
+            - button "Profile" [ref=e92] [cursor=pointer]:
+              - img [ref=e93]
+        - main [ref=e97]:
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - heading "My Library" [level=1] [ref=e100]
+              - paragraph [ref=e101]: Collections, saved texts, bookmarks, and recent study activity.
+            - generic [ref=e102]:
+              - generic [ref=e103]:
+                - generic [ref=e104]:
+                  - button "Saved Texts" [ref=e105] [cursor=pointer]
+                  - button "Bookmarks" [ref=e106] [cursor=pointer]
+                  - button "Notes" [active] [ref=e107] [cursor=pointer]
+                - generic [ref=e108]:
+                  - heading "Notes (0)" [level=2] [ref=e109]
+                  - paragraph [ref=e111]: No notes yet
+              - generic [ref=e112]:
+                - heading "Quick Stats" [level=2] [ref=e113]
+                - generic [ref=e114]:
+                  - paragraph [ref=e115]: "Saved Texts: 0"
+                  - paragraph [ref=e116]: "Bookmarks: 0"
+                  - paragraph [ref=e117]: "Notes: 0"
+  - alert [ref=e118]
+```

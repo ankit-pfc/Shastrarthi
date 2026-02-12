@@ -196,4 +196,64 @@ export async function generateChatResponse(
     }
 }
 
-export default { generateChatResponse, isConfigured, LearnLMError };
+export async function generateSynthesisResponse(query: string, textSummaries: string): Promise<string> {
+    if (!isConfigured()) {
+        throw new LearnLMError(
+            "LearnLM API key is not configured. Please set GEMINI_API_KEY environment variable.",
+            "missing_api_key"
+        );
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    const prompt = [
+        "You are a Sanskrit research assistant.",
+        "Generate a concise synthesis in markdown.",
+        `User query: ${query}`,
+        "Candidate texts:",
+        textSummaries,
+        "Output format:",
+        "- One short overview paragraph",
+        "- 3 bullet points with cross-text insights",
+        "- One suggested next step for study",
+    ].join("\n");
+
+    const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            contents: [
+                {
+                    role: "user",
+                    parts: [{ text: prompt }],
+                },
+            ],
+            generationConfig: {
+                temperature: 0.5,
+                maxOutputTokens: 900,
+            },
+        }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new LearnLMError(
+            errorData.error?.message || "Failed to generate synthesis",
+            errorData.error?.code,
+            response.status
+        );
+    }
+
+    const data = await response.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+}
+
+const learnlm = {
+    generateChatResponse,
+    generateSynthesisResponse,
+    isConfigured,
+    LearnLMError,
+};
+
+export default learnlm;

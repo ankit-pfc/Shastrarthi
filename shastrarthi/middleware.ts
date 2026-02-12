@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import {
     getCanonicalRedirect,
     hasSupabaseAuthCookie,
+    isLocalhostHost,
     isProtectedAppRoute,
 } from "@/lib/routing";
 
@@ -15,11 +16,14 @@ export async function middleware(request: NextRequest) {
     }
 
     const cookieNames = request.cookies.getAll().map((cookie) => cookie.name);
+    const host = request.headers.get("host");
     const bypassAuthForE2E =
         process.env.E2E_AUTH_BYPASS === "1" && request.headers.get("x-e2e-auth") === "1";
-    const hasAuth = bypassAuthForE2E || hasSupabaseAuthCookie(cookieNames);
+    const bypassAuthForLocalhost = process.env.NODE_ENV !== "production" && isLocalhostHost(host);
+    const hasAuth = hasSupabaseAuthCookie(cookieNames);
+    const canAccessProtectedApp = hasAuth || bypassAuthForE2E || bypassAuthForLocalhost;
 
-    if (!hasAuth && isProtectedAppRoute(pathname)) {
+    if (!canAccessProtectedApp && isProtectedAppRoute(pathname)) {
         const redirectUrl = new URL("/auth/login", request.url);
         redirectUrl.searchParams.set("redirect", `${pathname}${search}`);
         return NextResponse.redirect(redirectUrl);

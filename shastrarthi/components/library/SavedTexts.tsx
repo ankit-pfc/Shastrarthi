@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { BookOpen, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface SavedTextsProps {
     texts: any[];
@@ -19,10 +18,10 @@ export default function SavedTexts({ texts, onRemove }: SavedTextsProps) {
             {texts.length === 0 ? (
                 <div className="text-center py-16">
                     <p className="text-sand-600 dark:text-sand-400 text-lg">
-                        You haven't saved any texts yet.
+                        You haven&apos;t saved any texts yet.
                     </p>
                     <Link
-                        href="/discover"
+                        href="/app/discover"
                         className="inline-flex items-center gap-2 text-saffron-600 dark:text-saffron-400 hover:text-saffron-700 dark:hover:text-saffron-300 transition-colors"
                     >
                         <BookOpen className="h-5 w-5" />
@@ -39,7 +38,7 @@ export default function SavedTexts({ texts, onRemove }: SavedTextsProps) {
                             <div className="flex items-start justify-between gap-3 mb-3">
                                 <div className="flex-1 min-w-0">
                                     <Link
-                                        href={`/reader/${text.slug}`}
+                                        href={`/app/reader/${text.slug}`}
                                         className="group"
                                     >
                                         <h3 className="text-lg font-semibold text-sand-900 dark:text-sand-100 group-hover:text-saffron-600 dark:group-hover:text-saffron-400 transition-colors line-clamp-1">

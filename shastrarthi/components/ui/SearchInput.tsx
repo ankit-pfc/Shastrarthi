@@ -58,14 +58,14 @@ export default function SearchInput({
         <div className={cn("w-full max-w-2xl mx-auto", className)}>
             <div className="relative">
                 <div className="relative flex items-center bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden">
-                    <Search className="absolute left-5 h-5 w-5 text-gray-400 flex-shrink-0" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 flex-shrink-0" />
                     <input
                         type="text"
                         value={value}
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
                         placeholder={placeholder}
-                        className="flex-1 h-16 pl-16 pr-4 bg-transparent text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                        className="flex-1 h-12 pl-12 pr-4 bg-transparent text-gray-900 placeholder:text-gray-400 focus:outline-none"
                     />
                     {value && (
                         <button

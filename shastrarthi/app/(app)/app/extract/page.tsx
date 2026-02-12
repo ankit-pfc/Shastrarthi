@@ -4,6 +4,11 @@ import { useState } from "react";
 
 export default function ExtractPage() {
     const [question, setQuestion] = useState("How is detachment explained?");
+    const [rows, setRows] = useState<Array<{ text: string; insight: string; ref: string }>>([
+        { text: "Bhagavad Gita", insight: "Action without fruit-attachment is central.", ref: "2.47" },
+        { text: "Yoga Sutras", insight: "Vairagya balances sustained practice.", ref: "1.12" },
+    ]);
+    const [isLoading, setIsLoading] = useState(false);
 
     return (
         <div className="space-y-4">
@@ -15,7 +20,41 @@ export default function ExtractPage() {
                     onChange={(e) => setQuestion(e.target.value)}
                     className="w-full rounded-lg border border-gray-200 px-3 py-2 outline-none focus:ring-2 focus:ring-orange-500"
                 />
-                <button className="px-4 py-2 rounded-md bg-orange-600 hover:bg-orange-700 text-white">Run Extraction</button>
+                <button
+                    onClick={async () => {
+                        try {
+                            setIsLoading(true);
+                            const response = await fetch("/api/tools", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    mode: "extract",
+                                    payload: { question, context: "Shastra comparative extraction" },
+                                }),
+                            });
+                            if (!response.ok) return;
+                            const payload = await response.json();
+                            const content = payload.data.content as string;
+                            const lines = content
+                                .split("\n")
+                                .filter((line) => line.trim().length > 0)
+                                .slice(0, 5);
+                            setRows(
+                                lines.map((line, index) => ({
+                                    text: `Source ${index + 1}`,
+                                    insight: line.replace(/^[-*]\s*/, ""),
+                                    ref: `R${index + 1}`,
+                                }))
+                            );
+                        } finally {
+                            setIsLoading(false);
+                        }
+                    }}
+                    disabled={isLoading}
+                    className="px-4 py-2 rounded-md bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white"
+                >
+                    {isLoading ? "Running..." : "Run Extraction"}
+                </button>
             </div>
             <div className="bg-white border border-gray-200 rounded-xl overflow-x-auto">
                 <table className="w-full text-sm">
@@ -27,16 +66,13 @@ export default function ExtractPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="border-t border-gray-100">
-                            <td className="p-3">Bhagavad Gita</td>
-                            <td className="p-3">Action without fruit-attachment is central.</td>
-                            <td className="p-3">2.47</td>
-                        </tr>
-                        <tr className="border-t border-gray-100">
-                            <td className="p-3">Yoga Sutras</td>
-                            <td className="p-3">Vairagya balances sustained practice.</td>
-                            <td className="p-3">1.12</td>
-                        </tr>
+                        {rows.map((row, index) => (
+                            <tr key={`${row.ref}-${index}`} className="border-t border-gray-100">
+                                <td className="p-3">{row.text}</td>
+                                <td className="p-3">{row.insight}</td>
+                                <td className="p-3">{row.ref}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
