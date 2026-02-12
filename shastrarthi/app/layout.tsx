@@ -3,7 +3,6 @@ import { Inter, Source_Serif_4, Noto_Serif_Devanagari } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import ClientLayout from "@/components/ClientLayout";
-import Navbar from "@/components/header/Navbar";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -46,14 +45,13 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang="en">
             <body className={`${inter.variable} ${sourceSerif4.variable} ${notoSerifDevanagari.variable} font-sans antialiased`}>
                 <a href="#main-content" className="skip-link">
                     Skip to main content
                 </a>
                 <AuthProvider>
                     <ClientLayout>
-                        <Navbar />
                         <main id="main-content">
                             {children}
                         </main>

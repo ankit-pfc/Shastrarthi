@@ -26,34 +26,34 @@ export default function TextCard({
     const getDifficultyColor = () => {
         switch (difficulty) {
             case "beginner":
-                return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300";
+                return "bg-green-100 text-green-700";
             case "intermediate":
-                return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300";
+                return "bg-yellow-100 text-yellow-700";
             case "advanced":
-                return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300";
+                return "bg-orange-100 text-orange-700";
             case "scholar":
-                return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300";
+                return "bg-red-100 text-red-700";
             default:
-                return "bg-sand-100 text-sand-700 dark:bg-sand-700 dark:text-sand-300";
+                return "bg-gray-100 text-gray-700";
         }
     };
 
     const getCategoryColor = () => {
         switch (category) {
             case "Veda":
-                return "text-purple-600 dark:text-purple-400";
+                return "text-purple-600";
             case "Upanishad":
-                return "text-blue-600 dark:text-blue-400";
+                return "text-blue-600";
             case "Tantra":
-                return "text-red-600 dark:text-red-400";
+                return "text-red-600";
             case "Yoga":
-                return "text-green-600 dark:text-green-400";
+                return "text-green-600";
             case "Itihasa":
-                return "text-orange-600 dark:text-orange-400";
+                return "text-orange-600";
             case "Purana":
-                return "text-pink-600 dark:text-pink-400";
+                return "text-pink-600";
             default:
-                return "text-sand-600 dark:text-sand-400";
+                return "text-gray-600";
         }
     };
 
@@ -79,19 +79,19 @@ export default function TextCard({
     const getCategoryBgColor = () => {
         switch (category) {
             case "Veda":
-                return "bg-purple-50 dark:bg-purple-900/20";
+                return "bg-purple-50";
             case "Upanishad":
-                return "bg-blue-50 dark:bg-blue-900/20";
+                return "bg-blue-50";
             case "Tantra":
-                return "bg-red-50 dark:bg-red-900/20";
+                return "bg-red-50";
             case "Yoga":
-                return "bg-green-50 dark:bg-green-900/20";
+                return "bg-green-50";
             case "Itihasa":
-                return "bg-orange-50 dark:bg-orange-900/20";
+                return "bg-orange-50";
             case "Purana":
-                return "bg-pink-50 dark:bg-pink-900/20";
+                return "bg-pink-50";
             default:
-                return "bg-sand-50 dark:bg-sand-700/20";
+                return "bg-gray-50";
         }
     };
 
@@ -101,8 +101,8 @@ export default function TextCard({
         <Link
             href={`/reader/${slug}`}
             className={cn(
-                "group block bg-white dark:bg-sand-800 rounded-xl shadow-sm border border-sand-200 dark:border-sand-700",
-                "hover:shadow-lg hover:border-saffron-400 dark:hover:border-saffron-500 hover:-translate-y-1",
+                "group block bg-white rounded-xl shadow-sm border border-gray-200",
+                "hover:shadow-lg hover:border-orange-400 hover:-translate-y-1",
                 "transition-all duration-300 ease-out"
             )}
         >
@@ -127,11 +127,11 @@ export default function TextCard({
                             <Tag className="h-3 w-3" />
                             {category}
                         </span>
-                        <h3 className="text-lg font-semibold text-sand-900 dark:text-sand-100 line-clamp-1 group-hover:text-saffron-600 dark:group-hover:text-saffron-400 transition-colors mt-2">
+                        <h3 className="text-lg font-semibold text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors mt-2">
                             {title}
                         </h3>
                         {sanskritTitle && (
-                            <p className="text-sm font-serif text-saffron-600 dark:text-saffron-400 line-clamp-1">
+                            <p className="text-sm font-serif text-orange-600 line-clamp-1">
                                 {sanskritTitle}
                             </p>
                         )}
@@ -148,18 +148,18 @@ export default function TextCard({
 
                 {/* Description */}
                 {description && (
-                    <p className="text-sm text-sand-600 dark:text-sand-400 line-clamp-2 mb-4 leading-relaxed">
+                    <p className="text-sm text-gray-600 line-clamp-2 mb-4 leading-relaxed">
                         {description}
                     </p>
                 )}
 
                 {/* Footer */}
-                <div className="flex items-center justify-between text-sm text-sand-500 dark:text-sand-500 pt-3 border-t border-sand-100 dark:border-sand-700">
+                <div className="flex items-center justify-between text-sm text-gray-500 pt-3 border-t border-gray-100">
                     <div className="flex items-center gap-1.5">
                         <BookOpen className="h-4 w-4" />
                         <span>{verseCount} verses</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-saffron-600 dark:text-saffron-400 font-medium group-hover:gap-2 transition-all">
+                    <div className="flex items-center gap-1.5 text-orange-600 font-medium group-hover:gap-2 transition-all">
                         <span>Read</span>
                         <MessageSquare className="h-4 w-4" />
                     </div>

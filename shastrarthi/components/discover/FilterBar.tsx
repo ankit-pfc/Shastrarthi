@@ -37,19 +37,19 @@ export default function FilterBar({
     const hasActiveFilters = category || difficulty;
 
     return (
-        <div className="bg-white dark:bg-sand-800 rounded-lg shadow-sm border border-sand-200 dark:border-sand-700 p-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex flex-wrap items-center gap-4">
                 {/* Category Filter */}
                 <div className="flex items-center gap-2">
-                    <Filter className="h-4 w-4 text-sand-500" />
+                    <Filter className="h-4 w-4 text-gray-500" />
                     <div className="flex flex-wrap gap-2">
                         <button
                             onClick={() => onCategoryChange(null)}
                             className={cn(
                                 "px-3 py-1.5 text-sm rounded-md transition-colors",
                                 !category
-                                    ? "bg-saffron-100 text-saffron-700 dark:bg-saffron-900/30 dark:text-saffron-300"
-                                    : "text-sand-600 hover:bg-sand-100 dark:text-sand-400 dark:hover:bg-sand-700"
+                                    ? "bg-orange-100 text-orange-700"
+                                    : "text-gray-600 hover:bg-gray-100"
                             )}
                         >
                             All
@@ -61,8 +61,8 @@ export default function FilterBar({
                                 className={cn(
                                     "px-3 py-1.5 text-sm rounded-md transition-colors",
                                     category === cat.value
-                                        ? "bg-saffron-100 text-saffron-700 dark:bg-saffron-900/30 dark:text-saffron-300"
-                                        : "text-sand-600 hover:bg-sand-100 dark:text-sand-400 dark:hover:bg-sand-700"
+                                        ? "bg-orange-100 text-orange-700"
+                                        : "text-gray-600 hover:bg-gray-100"
                                 )}
                             >
                                 {cat.label}
@@ -73,15 +73,15 @@ export default function FilterBar({
 
                 {/* Difficulty Filter */}
                 <div className="flex items-center gap-2">
-                    <div className="w-px h-4 bg-sand-300 dark:bg-sand-600" />
+                    <div className="w-px h-4 bg-gray-300" />
                     <div className="flex flex-wrap gap-2">
                         <button
                             onClick={() => onDifficultyChange(null)}
                             className={cn(
                                 "px-3 py-1.5 text-sm rounded-md transition-colors",
                                 !difficulty
-                                    ? "bg-saffron-100 text-saffron-700 dark:bg-saffron-900/30 dark:text-saffron-300"
-                                    : "text-sand-600 hover:bg-sand-100 dark:text-sand-400 dark:hover:bg-sand-700"
+                                    ? "bg-orange-100 text-orange-700"
+                                    : "text-gray-600 hover:bg-gray-100"
                             )}
                         >
                             All
@@ -93,8 +93,8 @@ export default function FilterBar({
                                 className={cn(
                                     "px-3 py-1.5 text-sm rounded-md transition-colors",
                                     difficulty === diff.value
-                                        ? "bg-saffron-100 text-saffron-700 dark:bg-saffron-900/30 dark:text-saffron-300"
-                                        : "text-sand-600 hover:bg-sand-100 dark:text-sand-400 dark:hover:bg-sand-700"
+                                        ? "bg-orange-100 text-orange-700"
+                                        : "text-gray-600 hover:bg-gray-100"
                                 )}
                             >
                                 {diff.label}
@@ -107,7 +107,7 @@ export default function FilterBar({
                 {hasActiveFilters && (
                     <button
                         onClick={onClearFilters}
-                        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md text-sand-600 hover:bg-sand-100 dark:text-sand-400 dark:hover:bg-sand-700 transition-colors"
+                        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-gray-100 transition-colors"
                     >
                         <X className="h-4 w-4" />
                         Clear

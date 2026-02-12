@@ -1,7 +1,7 @@
-# Deployment Guide - Shastra Platform
+# Deployment Guide - Shastrarthi
 
 ## Overview
-This guide covers deploying the Shastra Platform to production.
+This guide covers deploying Shastrarthi to production.
 
 ## Prerequisites
 
@@ -182,7 +182,7 @@ Use a process manager like PM2:
 
 ```bash
 npm install -g pm2
-pm2 start npm --name "shastra-platform" -- start
+pm2 start npm --name "shastrarthi" -- start
 pm2 save
 pm2 startup
 ```
@@ -226,8 +226,8 @@ CMD ["npm", "start"]
 
 ```bash
 # Build and run
-docker build -t shastra-platform .
-docker run -p 3000:3000 --env-file .env shastra-platform
+docker build -t shastrarthi .
+docker run -p 3000:3000 --env-file .env shastrarthi
 ```
 
 ## Post-Deployment Checklist

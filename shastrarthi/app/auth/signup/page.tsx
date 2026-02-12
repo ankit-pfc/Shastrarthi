@@ -5,6 +5,6 @@ export default function SignupPage() {
 }
 
 export const metadata = {
-    title: "Sign Up - Shastra Platform",
-    description: "Create a new Shastra Platform account",
+    title: "Sign Up - Shastrarthi",
+    description: "Create your Shastrarthi account",
 };

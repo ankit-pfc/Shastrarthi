@@ -6,6 +6,6 @@ export default function LoginPage() {
 }
 
 export const metadata = {
-    title: "Sign In - Shastra Platform",
-    description: "Sign in to your Shastra Platform account",
+    title: "Sign In - Shastrarthi",
+    description: "Sign in to your Shastrarthi account",
 };

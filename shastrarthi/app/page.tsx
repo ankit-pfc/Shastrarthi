@@ -1,16 +1,26 @@
+import Navbar from "@/components/header/Navbar";
 import Hero from "@/components/landing/Hero";
-import QuickIntents from "@/components/landing/QuickIntents";
+import IntentBuilder from "@/components/landing/IntentBuilder";
+import PopularTasks from "@/components/landing/PopularTasks";
 import FeaturedTexts from "@/components/landing/FeaturedTexts";
 import HowItWorks from "@/components/landing/HowItWorks";
+import Pricing from "@/components/landing/Pricing";
+import FAQ from "@/components/landing/FAQ";
+import Footer from "@/components/landing/Footer";
 
 export default function Home() {
     return (
         <main className="min-h-screen">
+            <Navbar />
             <Hero />
-            <div className="container mx-auto px-4 py-12 space-y-12">
-                <QuickIntents />
+            <div>
+                <IntentBuilder />
+                <PopularTasks />
                 <FeaturedTexts />
                 <HowItWorks />
+                <Pricing />
+                <FAQ />
+                <Footer />
             </div>
         </main>
     );

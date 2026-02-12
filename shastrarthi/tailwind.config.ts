@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-    darkMode: "class",
     content: [
         "./pages/**/*.{js,ts,jsx,tsx,mdx}",
         "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -30,6 +29,33 @@ const config: Config = {
                 saffron: {
                     500: "#D89569", // Accent lines, badges, micro-emphasis
                     700: "#A07461", // Deeper saffron for hover/pressed accents
+                },
+                // Orange accent colors for new design system
+                orange: {
+                    100: "#FFEDD5", // Light peach for secondary backgrounds
+                    200: "#FED7AA", // Light orange for hover states
+                    300: "#FDBA74", // Medium light orange
+                    400: "#FB923C", // Medium orange
+                    500: "#F97316", // Medium orange for icons
+                    600: "#EA580C", // Primary orange for buttons
+                    700: "#C2410C", // Darker orange for hover states
+                },
+                // Gray colors for text hierarchy
+                gray: {
+                    400: "#9CA3AF", // Placeholder text
+                    500: "#6B7280", // Helper text
+                    600: "#4B5563", // Secondary text
+                    900: "#111827", // Primary text
+                },
+                // Status dot colors
+                green: {
+                    500: "#22C55E",
+                },
+                blue: {
+                    500: "#3B82F6",
+                },
+                purple: {
+                    500: "#A855F7",
                 },
                 // Legacy colors for backward compatibility
                 sand: {
@@ -110,11 +136,13 @@ const config: Config = {
                 card: "20px",
                 control: "16px",
                 chip: "14px",
+                "2xl": "16px", // For search bar
+                xl: "12px", // For search button
             },
             fontFamily: {
                 // Typography-optimized for long-form reading
                 sans: ["Inter", "system-ui", "sans-serif"],
-                serif: ["Source Serif 4", "Georgia", "serif"],
+                serif: ["Merriweather", "Newsreader", "Playfair Display", "Georgia", "serif"],
                 devanagari: ["Noto Serif Devanagari", "serif"],
             },
             fontSize: {
@@ -154,6 +182,14 @@ const config: Config = {
                 // Better readability for long-form content
                 "reading": "1.8",
                 "sanskrit": "1.6",
+                relaxed: "1.75", // For subheadings
+            },
+            boxShadow: {
+                "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)", // Badge
+                "md": "0 4px 6px -1px rgb(0 0 0 / 0.1)", // Buttons
+                "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1)", // Cards
+                "xl": "0 20px 25px -5px rgb(0 0 0 / 0.1)", // Search bar
+                "orange": "0 4px 6px -1px rgb(234 88 12 / 0.2)", // Orange shadow
             },
         },
     },

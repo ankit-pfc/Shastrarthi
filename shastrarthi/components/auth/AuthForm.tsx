@@ -132,15 +132,15 @@ export default function AuthForm({ mode }: AuthFormProps) {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-sand-50 to-ochre-50 dark:from-sand-900 dark:to-ochre-900 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-orange-50/30 to-orange-100/50 px-4">
             <div className="w-full max-w-md">
-                <div className="bg-white dark:bg-sand-800 rounded-lg shadow-lg border border-sand-200 dark:border-sand-700 p-8">
+                <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
                     {/* Header */}
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-sand-900 dark:text-sand-100 mb-2">
-                            {mode === "login" ? "Welcome Back" : "Join Shastra"}
+                        <h1 className="text-h2 font-semibold font-serif text-gray-900 mb-2">
+                            {mode === "login" ? "Welcome Back" : "Join Shastrarthi"}
                         </h1>
-                        <p className="text-sand-600 dark:text-sand-400">
+                        <p className="text-body/md text-gray-600 leading-relaxed">
                             {mode === "login"
                                 ? "Sign in to continue your spiritual journey"
                                 : "Create an account to begin exploring ancient wisdom"}
@@ -149,7 +149,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
                     {/* Success Message */}
                     {success && (
-                        <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md text-green-700 dark:text-green-300 text-sm flex items-center gap-2">
+                        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm flex items-center gap-2">
                             <CheckCircle className="h-4 w-4" />
                             {success}
                         </div>
@@ -157,7 +157,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
                     {/* Error Message */}
                     {error && (
-                        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md text-red-700 dark:text-red-300 text-sm flex items-center gap-2">
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-center gap-2">
                             <AlertCircle className="h-4 w-4" />
                             {error}
                         </div>
@@ -167,11 +167,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {mode === "signup" && (
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-sand-700 dark:text-sand-300 mb-1">
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                                     Name
                                 </label>
                                 <div className="relative">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-sand-400" />
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                                     <input
                                         id="name"
                                         type="text"
@@ -191,7 +191,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                         maxLength={100}
                                         aria-invalid={touched.name && !!validationErrors.name}
                                         aria-describedby={validationErrors.name ? "name-error" : undefined}
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-sand-300 dark:border-sand-600 bg-sand-50 dark:bg-sand-900 text-sand-900 dark:text-sand-100 focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                     />
                                 </div>
                                 {touched.name && validationErrors.name && (
@@ -203,11 +203,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
                         )}
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-sand-700 dark:text-sand-300 mb-1">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                                 Email
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-sand-400" />
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                                 <input
                                     id="email"
                                     type="email"
@@ -227,7 +227,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                     autoComplete="email"
                                     aria-invalid={touched.email && !!validationErrors.email}
                                     aria-describedby={validationErrors.email ? "email-error" : undefined}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-sand-300 dark:border-sand-600 bg-sand-50 dark:bg-sand-900 text-sand-900 dark:text-sand-100 focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                 />
                             </div>
                             {touched.email && validationErrors.email && (
@@ -238,11 +238,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-sand-700 dark:text-sand-300 mb-1">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                                 Password
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-sand-400" />
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                                 <input
                                     id="password"
                                     type="password"
@@ -264,7 +264,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                     autoComplete={mode === "login" ? "current-password" : "new-password"}
                                     aria-invalid={touched.password && !!validationErrors.password}
                                     aria-describedby={validationErrors.password ? "password-error" : undefined}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-sand-300 dark:border-sand-600 bg-sand-50 dark:bg-sand-900 text-sand-900 dark:text-sand-100 focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                 />
                             </div>
                             {touched.password && validationErrors.password && (
@@ -278,7 +278,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full flex items-center justify-center gap-2 bg-saffron-600 hover:bg-saffron-700 text-white py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? (
                                 <>
@@ -296,9 +296,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     {/* Divider */}
                     <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-sand-200 dark:border-sand-700" />
+                            <div className="w-full border-t border-gray-200" />
                         </div>
-                        <span className="relative bg-white dark:bg-sand-800 px-4 text-sm text-sand-500 dark:text-sand-400">
+                        <span className="relative bg-white px-4 text-sm text-gray-500">
                             Or continue with
                         </span>
                     </div>
@@ -307,7 +307,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     <button
                         onClick={handleGoogleSignIn}
                         disabled={loading}
-                        className="w-full flex items-center justify-center gap-3 border border-sand-300 dark:border-sand-600 py-2.5 rounded-lg font-medium hover:bg-sand-50 dark:hover:bg-sand-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full flex items-center justify-center gap-3 border border-gray-300 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <svg className="h-5 w-5" viewBox="0 0 24 24">
                             <path
@@ -315,22 +315,22 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                 fill="#4285F4"
                             />
                         </svg>
-                        <span className="text-sand-700 dark:text-sand-300">Google</span>
+                        <span className="text-gray-700">Google</span>
                     </button>
 
                     {/* Footer Link */}
-                    <p className="mt-6 text-center text-sm text-sand-600 dark:text-sand-400">
+                    <p className="mt-6 text-center text-sm text-gray-600">
                         {mode === "login" ? (
                             <>
                                 Don't have an account?{" "}
-                                <a href="/auth/signup" className="text-saffron-600 hover:text-saffron-700 dark:text-saffron-400 dark:hover:text-saffron-300 font-medium">
+                                <a href="/auth/signup" className="text-orange-600 hover:text-orange-700 font-medium">
                                     Sign up
                                 </a>
                             </>
                         ) : (
                             <>
                                 Already have an account?{" "}
-                                <a href="/auth/login" className="text-saffron-600 hover:text-saffron-700 dark:text-saffron-400 dark:hover:text-saffron-300 font-medium">
+                                <a href="/auth/login" className="text-orange-600 hover:text-orange-700 font-medium">
                                     Sign in
                                 </a>
                             </>

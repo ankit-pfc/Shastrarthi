@@ -11,7 +11,7 @@ Vercel may have linked the project incorrectly or needs explicit configuration t
 
 ### 1. Create `vercel.json` Configuration File
 
-Create a `vercel.json` file in the `shastra-platform/` directory with the following configuration:
+Create a `vercel.json` file in the `shastrarthi/` directory with the following configuration:
 
 ```json
 {
@@ -42,7 +42,7 @@ Ensure the following environment variables are set in the Vercel dashboard:
 After adding the configuration file:
 
 ```bash
-# From shastra-platform directory
+# From shastrarthi directory
 vercel --prod
 ```
 

@@ -122,7 +122,7 @@
 
   /* Focus visible styles for better keyboard navigation */
   *:focus-visible {
-    outline: 2px solid #D89569;
+    outline: 2px solid #EA580C;
     outline-offset: 2px;
   }
 
@@ -131,8 +131,8 @@
     position: absolute;
     top: -40px;
     left: 0;
-    background: #2D2A3D;
-    color: #FEF7F4;
+    background: #EA580C;
+    color: #FFFFFF;
     padding: 8px 16px;
     z-index: 100;
     transition: top 0.3s;

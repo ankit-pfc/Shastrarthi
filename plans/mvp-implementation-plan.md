@@ -1,4 +1,4 @@
-# Shastra Platform - Phase 1 MVP Implementation Plan
+# Shastrarthi - Phase 1 MVP Implementation Plan
 
 **Version:** 1.0
 **Date:** 2026-02-10
@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-This plan outlines implementation of Shastra Platform MVP - a research platform for ancient Sanskrit texts with AI-powered explanations. The MVP focuses on core reading experience, AI chat functionality, basic authentication, and personal library features.
+This plan outlines implementation of Shastrarthi MVP - a research platform for ancient Sanskrit texts with AI-powered explanations. The MVP focuses on core reading experience, AI chat functionality, basic authentication, and personal library features.
 
 ### Tech Stack
 
@@ -186,7 +186,7 @@ CREATE TABLE reading_progress (
 
 **Deliverables:**
 ```
-shastra-platform/
+shastrarthi/
 ├── .env.local
 ├── .env.example
 ├── next.config.js
@@ -488,7 +488,7 @@ User's question: {user_query}
 ## File Structure (Final)
 
 ```
-shastra-platform/
+shastrarthi/
 ├── app/
 │   ├── (auth)/
 │   │   ├── login/

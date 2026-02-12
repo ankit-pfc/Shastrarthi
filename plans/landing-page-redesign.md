@@ -3,8 +3,8 @@
 ## Current State Analysis
 
 ### Existing Components
-- **Hero Section** ([`Hero.tsx`](shastra-platform/components/landing/Hero.tsx)): Headline, description, 2 CTAs (Browse Texts, Get Started)
-- **HowItWorks Section** ([`HowItWorks.tsx`](shastra-platform/components/landing/HowItWorks.tsx)): 4 steps with icons (Discover, Read & Learn, Ask AI, Save & Organize)
+- **Hero Section** ([`Hero.tsx`](shastrarthi/components/landing/Hero.tsx)): Headline, description, 2 CTAs (Browse Texts, Get Started)
+- **HowItWorks Section** ([`HowItWorks.tsx`](shastrarthi/components/landing/HowItWorks.tsx)): 4 steps with icons (Discover, Read & Learn, Ask AI, Save & Organize)
 
 ### Missing Elements (User Requirements)
 1. No chat or action for users to perform while on the landing page
@@ -227,7 +227,7 @@ graph TD
 ## File Structure
 
 ```
-shastra-platform/
+shastrarthi/
 ├── app/
 │   └── page.tsx (updated with new sections)
 ├── components/

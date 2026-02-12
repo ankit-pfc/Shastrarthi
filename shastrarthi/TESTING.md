@@ -1,7 +1,7 @@
-# Testing Guide - Shastra Platform
+# Testing Guide - Shastrarthi
 
 ## Overview
-This document outlines the testing scenarios and procedures for the Shastra Platform MVP.
+This document outlines the testing scenarios and procedures for the Shastrarthi MVP.
 
 ## Prerequisites
 - Node.js 18+ installed

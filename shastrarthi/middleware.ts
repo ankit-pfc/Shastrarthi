@@ -1,38 +1,36 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-// Routes that don't require authentication
-const publicRoutes = [
-    "/",
-    "/auth/login",
-    "/auth/signup",
-    "/auth/callback",
-    "/api/auth",
-];
+import {
+    getCanonicalRedirect,
+    hasSupabaseAuthCookie,
+    isProtectedAppRoute,
+} from "@/lib/routing";
 
 export async function middleware(request: NextRequest) {
-    const res = NextResponse.next();
-    const isPublicRoute = publicRoutes.some((route) =>
-        request.nextUrl.pathname.startsWith(route)
-    );
+    const { pathname, search } = request.nextUrl;
 
-    // Check for auth cookie
-    const authCookie = request.cookies.get("sb-access-token");
-    const hasAuth = !!authCookie;
+    const canonical = getCanonicalRedirect(pathname);
+    if (canonical) {
+        return NextResponse.redirect(new URL(`${canonical}${search}`, request.url));
+    }
 
-    // If user is not signed in and trying to access protected route, redirect to login
-    if (!hasAuth && !isPublicRoute) {
+    const cookieNames = request.cookies.getAll().map((cookie) => cookie.name);
+    const bypassAuthForE2E =
+        process.env.E2E_AUTH_BYPASS === "1" && request.headers.get("x-e2e-auth") === "1";
+    const hasAuth = bypassAuthForE2E || hasSupabaseAuthCookie(cookieNames);
+
+    if (!hasAuth && isProtectedAppRoute(pathname)) {
         const redirectUrl = new URL("/auth/login", request.url);
+        redirectUrl.searchParams.set("redirect", `${pathname}${search}`);
         return NextResponse.redirect(redirectUrl);
     }
 
-    // If user is signed in and trying to access auth pages, redirect to home
-    if (hasAuth && isPublicRoute && request.nextUrl.pathname.startsWith("/auth")) {
-        const redirectUrl = new URL("/", request.url);
+    if (hasAuth && (pathname === "/auth/login" || pathname === "/auth/signup")) {
+        const redirectUrl = new URL("/app", request.url);
         return NextResponse.redirect(redirectUrl);
     }
 
-    return res;
+    return NextResponse.next();
 }
 
 export const config = {

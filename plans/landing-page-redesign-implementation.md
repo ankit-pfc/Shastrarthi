@@ -21,9 +21,9 @@ Stats row ("10+ Sacred Texts / AI Explanations / Save & Organize")
 ## Section 1: Global Header (Sticky Navigation)
 
 ### Files to Create/Modify
-- **New**: `shastra-platform/components/header/Navbar.tsx`
-- **Modify**: `shastra-platform/app/layout.tsx` (to include Navbar)
-- **Modify**: `shastra-platform/app/page.tsx` (adjust spacing for header)
+- **New**: `shastrarthi/components/header/Navbar.tsx`
+- **Modify**: `shastrarthi/app/layout.tsx` (to include Navbar)
+- **Modify**: `shastrarthi/app/page.tsx` (adjust spacing for header)
 
 ### Implementation Details
 
@@ -64,8 +64,8 @@ interface NavbarProps {
 ## Section 2: Hero Section - Search Modes
 
 ### Files to Modify
-- **Modify**: `shastra-platform/components/landing/Hero.tsx`
-- **Modify**: `shastra-platform/components/landing/SearchBar.tsx`
+- **Modify**: `shastrarthi/components/landing/Hero.tsx`
+- **Modify**: `shastrarthi/components/landing/SearchBar.tsx`
 
 ### Implementation Details
 
@@ -143,9 +143,9 @@ router.push(`/discover?mode=${selectedMode}&q=${encodeURIComponent(query)}`)
 ## Section 3: Intent Builder (3-Column Grid)
 
 ### Files to Create/Modify
-- **New**: `shastra-platform/components/landing/IntentBuilder.tsx`
-- **Delete**: `shastra-platform/components/landing/QuickIntents.tsx`
-- **Modify**: `shastra-platform/app/page.tsx` (import IntentBuilder instead)
+- **New**: `shastrarthi/components/landing/IntentBuilder.tsx`
+- **Delete**: `shastrarthi/components/landing/QuickIntents.tsx`
+- **Modify**: `shastrarthi/app/page.tsx` (import IntentBuilder instead)
 
 ### Implementation Details
 
@@ -301,7 +301,7 @@ const handleContinue = () => {
 ## Section 4: Featured Texts with Cover Images
 
 ### Files to Modify
-- **Modify**: `shastra-platform/components/landing/FeaturedTexts.tsx`
+- **Modify**: `shastrarthi/components/landing/FeaturedTexts.tsx`
 
 ### Implementation Details
 
@@ -368,9 +368,9 @@ const getCoverImage = (text: FeaturedText): string => {
 ## Section 5: Domain-Specific Icon System
 
 ### Files to Create/Modify
-- **New**: `shastra-platform/components/icons/DomainIcons.tsx`
-- **Modify**: `shastra-platform/components/landing/Hero.tsx` (stats row)
-- **Modify**: `shastra-platform/components/landing/HowItWorks.tsx`
+- **New**: `shastrarthi/components/icons/DomainIcons.tsx`
+- **Modify**: `shastrarthi/components/landing/Hero.tsx` (stats row)
+- **Modify**: `shastrarthi/components/landing/HowItWorks.tsx`
 
 ### Implementation Details
 
@@ -490,8 +490,8 @@ const STEPS = [
 ## Section 6: Copy Tweaks
 
 ### Files to Modify
-- **Modify**: `shastra-platform/components/landing/Hero.tsx`
-- **Modify**: `shastra-platform/components/landing/HowItWorks.tsx`
+- **Modify**: `shastrarthi/components/landing/Hero.tsx`
+- **Modify**: `shastrarthi/components/landing/HowItWorks.tsx`
 
 ### Copy Changes Summary
 
@@ -529,9 +529,9 @@ const STEPS = [
 ## Section 7: Stub Pages for New Routes
 
 ### Files to Create
-- **New**: `shastra-platform/app/lists/page.tsx`
-- **New**: `shastra-platform/app/traditions/page.tsx`
-- **New**: `shastra-platform/app/about/page.tsx`
+- **New**: `shastrarthi/app/lists/page.tsx`
+- **New**: `shastrarthi/app/traditions/page.tsx`
+- **New**: `shastrarthi/app/about/page.tsx`
 
 ### Stub Page Template
 ```typescript
@@ -562,7 +562,7 @@ export default function ListsPage() {
 ## Section 8: Discover Page Updates
 
 ### Files to Modify
-- **Modify**: `shastra-platform/app/discover/page.tsx`
+- **Modify**: `shastrarthi/app/discover/page.tsx`
 
 ### Implementation Details
 

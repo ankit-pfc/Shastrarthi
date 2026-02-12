@@ -15,18 +15,18 @@ export default function Navbar() {
     ];
 
     return (
-        <nav className="sticky top-0 z-50 bg-parchment-50 backdrop-blur-sm border-b border-stone-200">
+        <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-orange-100">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     {/* Left: Brand */}
                     <Link
                         href="/"
-                        className="flex items-center gap-2 text-ink-900 hover:text-ink-900 transition-colors"
+                        className="flex items-center gap-2 text-gray-900 hover:text-orange-600 transition-colors"
                     >
-                        <div className="flex items-center justify-center w-8 h-8 bg-ink-900 rounded-lg">
-                            <BookOpen className="h-5 w-5 text-parchment-50" />
+                        <div className="flex items-center justify-center w-8 h-8 bg-orange-600 rounded-lg shadow-sm">
+                            <BookOpen className="h-5 w-5 text-white" />
                         </div>
-                        <span className="text-xl font-bold font-serif">Shastrarthi</span>
+                        <span className="text-xl font-bold font-serif tracking-tight">Shastrarthi</span>
                     </Link>
 
                     {/* Center: Desktop Navigation */}
@@ -35,7 +35,7 @@ export default function Navbar() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="text-sm font-medium text-neutral-700 hover:text-ink-900 transition-colors relative after:content-[''] after:absolute after:-bottom-[-4px] after:left-0 after:w-full hover:after:border-b-2 hover:after:border-saffron-500"
+                                className="text-sm font-medium text-gray-600 hover:text-orange-600 transition-colors"
                             >
                                 {link.label}
                             </Link>
@@ -43,17 +43,17 @@ export default function Navbar() {
                     </div>
 
                     {/* Right: Auth Buttons */}
-                    <div className="flex items-center gap-3">
-                        <div className="hidden sm:flex items-center gap-3">
+                    <div className="flex items-center gap-4">
+                        <div className="hidden sm:flex items-center gap-4">
                             <Link
                                 href="/auth/login"
-                                className="text-sm font-medium text-neutral-700 hover:text-ink-900 transition-colors"
+                                className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
                             >
                                 Log in
                             </Link>
                             <Link
                                 href="/auth/signup"
-                                className="px-4 py-2 bg-ink-900 hover:bg-ink-800 text-parchment-50 text-sm font-medium rounded-lg transition-colors"
+                                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
                             >
                                 Sign up
                             </Link>
@@ -62,7 +62,7 @@ export default function Navbar() {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="md:hidden p-2 text-neutral-700 hover:bg-parchment-100 rounded-lg transition-colors"
+                            className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                             aria-label="Toggle menu"
                         >
                             {isMobileMenuOpen ? (
@@ -83,7 +83,7 @@ export default function Navbar() {
                                     key={link.href}
                                     href={link.href}
                                     onClick={() => setIsMobileMenuOpen(false)}
-                                    className="text-sm font-medium text-neutral-700 hover:text-ink-900 transition-colors py-2"
+                                    className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors py-2"
                                 >
                                     {link.label}
                                 </Link>
@@ -93,14 +93,14 @@ export default function Navbar() {
                             <Link
                                 href="/auth/login"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="text-sm font-medium text-neutral-700 hover:text-ink-900 transition-colors py-2"
+                                className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors py-2"
                             >
                                 Log in
                             </Link>
                             <Link
                                 href="/auth/signup"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="px-4 py-2 bg-ink-900 hover:bg-ink-800 text-parchment-50 text-sm font-medium rounded-lg transition-colors text-center"
+                                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors text-center"
                             >
                                 Sign up
                             </Link>
