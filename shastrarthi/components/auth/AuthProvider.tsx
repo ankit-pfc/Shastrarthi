@@ -16,6 +16,19 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function getConfiguredAppOrigin(): string {
+    const envUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    if (envUrl) {
+        const withProtocol = /^https?:\/\//i.test(envUrl) ? envUrl : `https://${envUrl}`;
+        try {
+            return new URL(withProtocol).origin;
+        } catch {
+            // Fall through to window origin when env value is malformed.
+        }
+    }
+    return window.location.origin;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
@@ -60,7 +73,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const signUp = async (email: string, password: string, name: string) => {
-        const emailRedirectTo = new URL("/auth/callback", window.location.origin).toString();
+        const appOrigin = getConfiguredAppOrigin();
+        const emailRedirectTo = new URL("/auth/callback", appOrigin).toString();
         const { error } = await supabase.auth.signUp({
             email,
             password,
@@ -80,7 +94,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const signInWithGoogle = async (nextPath?: string) => {
-        const callbackUrl = new URL("/auth/callback", window.location.origin);
+        const appOrigin = getConfiguredAppOrigin();
+        const callbackUrl = new URL("/auth/callback", appOrigin);
         if (nextPath?.startsWith("/")) {
             callbackUrl.searchParams.set("next", nextPath);
         }

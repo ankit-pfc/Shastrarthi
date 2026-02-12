@@ -52,3 +52,22 @@ export async function fetchTexts(filters: TextFilters = {}): Promise<Text[]> {
 export async function searchTextsByQuery(query: string, limit = 20): Promise<Text[]> {
     return fetchTexts({ search: query, limit });
 }
+
+export async function fetchTextsByIds(ids: string[]): Promise<Text[]> {
+    const unique = Array.from(new Set(ids)).filter(Boolean);
+    if (unique.length === 0) return [];
+
+    return measure("fetchTextsByIds", async () => {
+        const { data, error } = await supabase
+            .from("texts")
+            .select("*")
+            .in("id", unique)
+            .limit(Math.min(unique.length, 50));
+
+        if (error) {
+            throw new Error(`Failed to load texts by ids: ${error.message}`);
+        }
+
+        return data ?? [];
+    });
+}
