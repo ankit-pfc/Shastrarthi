@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Button from "./Button";
 
@@ -9,7 +9,6 @@ export interface SearchInputProps {
     value?: string;
     onChange?: (value: string) => void;
     onSearch?: (value: string) => void;
-    onClear?: () => void;
     placeholder?: string;
     helperText?: string;
     className?: string;
@@ -20,7 +19,6 @@ export default function SearchInput({
     value: controlledValue,
     onChange,
     onSearch,
-    onClear,
     placeholder = "Search texts, concepts, verses...",
     helperText,
     className,
@@ -35,13 +33,6 @@ export default function SearchInput({
             setUncontrolledValue(newValue);
         }
         onChange?.(newValue);
-    };
-
-    const handleClear = () => {
-        if (controlledValue === undefined) {
-            setUncontrolledValue("");
-        }
-        onClear?.();
     };
 
     const handleSearch = () => {
@@ -67,15 +58,6 @@ export default function SearchInput({
                         placeholder={placeholder}
                         className="flex-1 h-12 pl-12 pr-4 bg-transparent text-gray-900 placeholder:text-gray-400 focus:outline-none"
                     />
-                    {value && (
-                        <button
-                            onClick={handleClear}
-                            className="absolute right-4 p-1 rounded-md text-gray-400 hover:text-gray-600 transition-colors"
-                            aria-label="Clear search"
-                        >
-                            <X className="h-5 w-5" />
-                        </button>
-                    )}
                     {showSearchButton && (
                         <Button
                             onClick={handleSearch}

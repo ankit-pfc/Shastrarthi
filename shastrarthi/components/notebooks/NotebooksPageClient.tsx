@@ -57,6 +57,17 @@ export default function NotebooksPageClient({ initialNotebooks }: NotebooksPageC
                 <h1 className="text-h2 font-serif font-semibold text-gray-900 mb-2">Study Notebooks</h1>
                 <p className="text-gray-600">Structured notebooks for research and reflection.</p>
             </div>
+            {notebooks.length === 0 && (
+                <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
+                    <p className="text-sm text-gray-700">No notebooks yet. Create your first notebook to begin.</p>
+                    <button
+                        onClick={() => void createNotebook()}
+                        className="mt-2 inline-flex items-center justify-center rounded-md bg-orange-600 px-3 py-2 text-sm font-medium text-white hover:bg-orange-700"
+                    >
+                        Create notebook
+                    </button>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-4">
                 <aside className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">

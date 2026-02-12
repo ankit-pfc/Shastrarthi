@@ -151,12 +151,12 @@ export const POST = withAuth(async (request: NextRequest, _context, { supabase, 
                         );
                     }
 
-                    // Send the full response in chunks with SSE format
-                    for (const chunk of fullResponse) {
+                    // Send response in moderate chunks so UI updates quickly without per-character events.
+                    const chunkSize = 100;
+                    for (let i = 0; i < fullResponse.length; i += chunkSize) {
+                        const chunk = fullResponse.slice(i, i + chunkSize);
                         const chunkData = encoder.encode(`data: ${JSON.stringify({ content: chunk })}\n\n`);
                         controller.enqueue(chunkData);
-                        // Small delay to simulate streaming
-                        await new Promise(resolve => setTimeout(resolve, 10));
                     }
 
                     // Send done signal

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import SavedTexts from "@/components/library/SavedTexts";
 import BookmarksList from "@/components/library/BookmarksList";
@@ -41,6 +42,7 @@ export default function LibraryPageClient({ initialData }: LibraryPageClientProp
             savedTexts: libraryData.savedTexts.length,
             bookmarks: libraryData.bookmarks.length,
             notes: libraryData.notes.length,
+            totalItems: libraryData.savedTexts.length + libraryData.bookmarks.length + libraryData.notes.length,
         }),
         [libraryData]
     );
@@ -78,6 +80,19 @@ export default function LibraryPageClient({ initialData }: LibraryPageClientProp
                 <h1 className="text-h2 font-serif font-semibold text-gray-900 mb-2">My Library</h1>
                 <p className="text-gray-600">Collections, saved texts, bookmarks, and recent study activity.</p>
             </div>
+            {stats.totalItems === 0 && (
+                <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
+                    <p className="text-sm text-gray-700">
+                        No items yet. Start reading texts to build your library.
+                    </p>
+                    <Link
+                        href="/app/discover"
+                        className="mt-2 inline-flex items-center justify-center rounded-md bg-orange-600 px-3 py-2 text-sm font-medium text-white hover:bg-orange-700"
+                    >
+                        Discover texts
+                    </Link>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <section className="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm p-4">

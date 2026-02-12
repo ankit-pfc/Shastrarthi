@@ -1,17 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { debounce } from "@/lib/utils";
 
 interface SearchBarProps {
     value: string;
     onChange: (value: string) => void;
-    onClear: () => void;
 }
 
-export default function SearchBar({ value, onChange, onClear }: SearchBarProps) {
+export default function SearchBar({ value, onChange }: SearchBarProps) {
     const [localValue, setLocalValue] = useState(value);
 
     const debouncedOnChange = debounce((newValue: string) => {
@@ -22,11 +21,6 @@ export default function SearchBar({ value, onChange, onClear }: SearchBarProps) 
         const newValue = e.target.value;
         setLocalValue(newValue);
         debouncedOnChange(newValue);
-    };
-
-    const handleClear = () => {
-        setLocalValue("");
-        onClear();
     };
 
     return (
@@ -46,15 +40,6 @@ export default function SearchBar({ value, onChange, onClear }: SearchBarProps) 
                         "transition-all"
                     )}
                 />
-                {localValue && (
-                    <button
-                        onClick={handleClear}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-md text-gray-400 hover:text-gray-600 transition-colors"
-                        aria-label="Clear search"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
-                )}
             </div>
         </div>
     );
