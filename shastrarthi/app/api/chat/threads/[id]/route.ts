@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/server-supabase";
+import { withAuth } from "@/lib/api-utils";
+
+const MAX_CHAT_MESSAGE_LENGTH = 2000;
 
 interface RouteContext {
     params: { id: string };
 }
 
-export async function GET(_request: NextRequest, { params }: RouteContext) {
+export const GET = withAuth(async (_request: NextRequest, { params }: RouteContext, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const threadId = params.id;
 
         const { data: thread } = await (supabase as any)
@@ -35,17 +36,13 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 
         return NextResponse.json({ data: { thread, messages: messages ?? [] } });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("GET /api/chat/threads/[id] unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});
 
-export async function POST(request: NextRequest, { params }: RouteContext) {
+export const POST = withAuth(async (request: NextRequest, { params }: RouteContext, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const threadId = params.id;
         const body = await request.json();
         const role = body?.role as "user" | "assistant" | undefined;
@@ -53,6 +50,15 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
 
         if (!role || !content?.trim()) {
             return NextResponse.json({ error: "Missing role or content" }, { status: 400 });
+        }
+        if (role !== "user" && role !== "assistant") {
+            return NextResponse.json({ error: "Invalid role" }, { status: 400 });
+        }
+        if (content.length > MAX_CHAT_MESSAGE_LENGTH) {
+            return NextResponse.json(
+                { error: `Content is too long. Maximum ${MAX_CHAT_MESSAGE_LENGTH} characters allowed.` },
+                { status: 400 }
+            );
         }
 
         const { data, error } = await (supabase as any)
@@ -79,10 +85,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
 
         return NextResponse.json({ data });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("POST /api/chat/threads/[id] unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});

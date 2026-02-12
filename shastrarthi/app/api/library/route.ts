@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/server-supabase";
+import { withAuth } from "@/lib/api-utils";
 
-export async function GET() {
+export const GET = withAuth(async (_request, _context, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const db = supabase as any;
 
         const [{ data: savedTexts }, { data: bookmarks }, { data: notes }] = await Promise.all([
@@ -47,17 +46,13 @@ export async function GET() {
             },
         });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("GET /api/library failed:", error);
         return NextResponse.json({ error: "Failed to load library" }, { status: 500 });
     }
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest, _context, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const db = supabase as any;
         const body = await request.json();
         const textId = body?.textId as string | undefined;
@@ -79,17 +74,13 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ data });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("POST /api/library unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});
 
-export async function DELETE(request: NextRequest) {
+export const DELETE = withAuth(async (request: NextRequest, _context, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const db = supabase as any;
         const body = await request.json().catch(() => ({}));
         const textId = body?.textId as string | undefined;
@@ -111,10 +102,7 @@ export async function DELETE(request: NextRequest) {
 
         return NextResponse.json({ ok: true });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("DELETE /api/library unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});

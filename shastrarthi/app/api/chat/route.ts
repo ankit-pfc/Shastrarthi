@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
 import { generateChatResponse, generateSynthesisResponse, isConfigured, LearnLMError } from "@/lib/learnlm";
+import { withAuth } from "@/lib/api-utils";
+import { buildRateLimitHeaders, checkRateLimit, getClientIp } from "@/lib/rate-limit";
+
+const MAX_CHAT_QUERY_LENGTH = 2000;
+const AI_RATE_LIMIT = { windowMs: 60_000, maxRequests: 20 } as const;
 
 interface ChatRequestBody {
     textId?: string;
@@ -9,7 +13,38 @@ interface ChatRequestBody {
     conversationHistory?: Array<{ role: string; content: string }>;
 }
 
-export async function POST(request: NextRequest) {
+type SanitizedHistoryMessage = {
+    role: "user" | "assistant";
+    content: string;
+};
+
+function sanitizeConversationHistory(
+    history: Array<{ role: string; content: string }>
+): SanitizedHistoryMessage[] {
+    return history
+        .slice(-8)
+        .filter((msg) => msg && typeof msg.content === "string")
+        .map((msg) => ({
+            role: msg.role === "assistant" ? "assistant" : "user",
+            content: msg.content.slice(0, 2000),
+        }));
+}
+
+type ChatTextRecord = {
+    title_en: string;
+    title_sa: string | null;
+};
+
+type ChatVerseRecord = {
+    id: string;
+    ref: string;
+    sanskrit: string | null;
+    transliteration: string | null;
+    translation_en: string;
+    order_index: number;
+};
+
+export const POST = withAuth(async (request: NextRequest, _context, { supabase, user }) => {
     const encoder = new TextEncoder();
 
     try {
@@ -32,10 +67,25 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        if (query.length > 1000) {
+        if (query.length > MAX_CHAT_QUERY_LENGTH) {
             return NextResponse.json(
-                { error: "Query is too long. Maximum 1000 characters allowed." },
+                { error: `Query is too long. Maximum ${MAX_CHAT_QUERY_LENGTH} characters allowed.` },
                 { status: 400 }
+            );
+        }
+
+        const ip = getClientIp(request);
+        const rateLimitResult = checkRateLimit(`ai:${user.id}:${ip}`, AI_RATE_LIMIT);
+        if (!rateLimitResult.allowed) {
+            return NextResponse.json(
+                { error: "Rate limit exceeded. Please try again shortly." },
+                {
+                    status: 429,
+                    headers: {
+                        ...buildRateLimitHeaders(rateLimitResult),
+                        "Retry-After": String(rateLimitResult.retryAfterSeconds),
+                    },
+                }
             );
         }
 
@@ -55,29 +105,32 @@ export async function POST(request: NextRequest) {
 
                     if (textId && verseRef) {
                         // Fetch the text and verse for contextual mode
-                        const { data: text, error: textError } = await supabase
+                        const { data: textData, error: textError } = await supabase
                             .from("texts")
                             .select("title_en, title_sa")
                             .eq("id", textId)
                             .single();
-                        const { data: verse, error: verseError } = await supabase
+                        const { data: verseData, error: verseError } = await supabase
                             .from("verses")
                             .select("id, ref, sanskrit, transliteration, translation_en, order_index")
                             .eq("id", verseRef)
                             .single();
-                        const { data: verses } = await supabase
+                        const { data: versesData } = await supabase
                             .from("verses")
                             .select("id, ref, sanskrit, transliteration, translation_en, order_index")
                             .eq("text_id", textId)
                             .order("order_index", { ascending: true });
 
+                        const text = textData as ChatTextRecord | null;
+                        const verse = verseData as ChatVerseRecord | null;
+                        const verses = (versesData ?? []) as ChatVerseRecord[];
+
                         if (textError || !text || verseError || !verse) {
                             throw new Error("Could not resolve verse context for chat.");
                         }
 
-                        const currentVerseIndex = verses?.find((v: any) => v.id === verseRef)?.order_index || 0;
-                        const contextVerses =
-                            verses?.filter((v: any) => Math.abs(v.order_index - currentVerseIndex) <= 3) || [];
+                        const currentVerseIndex = verses?.find((v) => v.id === verseRef)?.order_index || 0;
+                        const contextVerses = verses?.filter((v) => Math.abs(v.order_index - currentVerseIndex) <= 3) || [];
                         const contextString = contextVerses.map((v) => `${v.ref}: ${v.translation_en}`).join("\n");
 
                         fullResponse = await generateChatResponse(
@@ -90,11 +143,12 @@ export async function POST(request: NextRequest) {
                             query
                         );
                     } else {
-                        const history = conversationHistory
-                            .slice(-8)
-                            .map((msg) => `${msg.role.toUpperCase()}: ${msg.content}`)
-                            .join("\n");
-                        fullResponse = await generateSynthesisResponse(query, history || "No prior context.");
+                        const history = sanitizeConversationHistory(conversationHistory);
+                        fullResponse = await generateSynthesisResponse(
+                            query,
+                            "No verse context provided.",
+                            history
+                        );
                     }
 
                     // Send the full response in chunks with SSE format
@@ -130,6 +184,7 @@ export async function POST(request: NextRequest) {
                 "Cache-Control": "no-cache, no-transform",
                 "Connection": "keep-alive",
                 "X-Accel-Buffering": "no", // Disable nginx buffering
+                ...buildRateLimitHeaders(rateLimitResult),
             },
         });
     } catch (error) {
@@ -148,4 +203,4 @@ export async function POST(request: NextRequest) {
             { status: 500 }
         );
     }
-}
+});

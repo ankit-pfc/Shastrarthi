@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/server-supabase";
+import { withAuth } from "@/lib/api-utils";
+
+const MAX_NOTEBOOK_TITLE_LENGTH = 200;
+const MAX_NOTEBOOK_CONTENT_LENGTH = 50_000;
 
 interface RouteContext {
     params: { id: string };
 }
 
-export async function GET(_request: NextRequest, { params }: RouteContext) {
+export const GET = withAuth(async (_request: NextRequest, { params }: RouteContext, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const { data, error } = await (supabase as any)
             .from("notebooks")
             .select("id, title, content, created_at, updated_at")
@@ -21,20 +23,29 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 
         return NextResponse.json({ data });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("GET /api/notebooks/[id] unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});
 
-export async function PUT(request: NextRequest, { params }: RouteContext) {
+export const PUT = withAuth(async (request: NextRequest, { params }: RouteContext, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const body = await request.json().catch(() => ({}));
         const title = (body?.title as string | undefined)?.trim();
         const content = body?.content as string | undefined;
+
+        if (typeof title === "string" && title.length > MAX_NOTEBOOK_TITLE_LENGTH) {
+            return NextResponse.json(
+                { error: `Title is too long. Maximum ${MAX_NOTEBOOK_TITLE_LENGTH} characters allowed.` },
+                { status: 400 }
+            );
+        }
+        if (typeof content === "string" && content.length > MAX_NOTEBOOK_CONTENT_LENGTH) {
+            return NextResponse.json(
+                { error: `Content is too long. Maximum ${MAX_NOTEBOOK_CONTENT_LENGTH} characters allowed.` },
+                { status: 400 }
+            );
+        }
 
         const updatePayload: Record<string, unknown> = {};
         if (typeof title === "string") updatePayload.title = title;
@@ -55,17 +66,13 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
 
         return NextResponse.json({ data });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("PUT /api/notebooks/[id] unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});
 
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
+export const DELETE = withAuth(async (_request: NextRequest, { params }: RouteContext, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const { error } = await (supabase as any)
             .from("notebooks")
             .delete()
@@ -79,10 +86,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
 
         return NextResponse.json({ ok: true });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("DELETE /api/notebooks/[id] unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});

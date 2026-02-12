@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/server-supabase";
+import { withAuth } from "@/lib/api-utils";
 
-export async function GET() {
+const MAX_CHAT_THREAD_TITLE_LENGTH = 200;
+const MAX_CHAT_THREAD_AGENT_LENGTH = 100;
+
+export const GET = withAuth(async (_request, _context, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const { data, error } = await (supabase as any)
             .from("chat_threads")
             .select("id, title, agent, created_at, updated_at")
@@ -17,20 +19,29 @@ export async function GET() {
 
         return NextResponse.json({ data: data ?? [] });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("GET /api/chat/threads unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest, _context, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const body = await request.json().catch(() => ({}));
         const title = (body?.title as string | undefined)?.trim() || "New chat";
         const agent = (body?.agent as string | undefined)?.trim() || null;
+
+        if (title.length > MAX_CHAT_THREAD_TITLE_LENGTH) {
+            return NextResponse.json(
+                { error: `Title is too long. Maximum ${MAX_CHAT_THREAD_TITLE_LENGTH} characters allowed.` },
+                { status: 400 }
+            );
+        }
+        if (agent && agent.length > MAX_CHAT_THREAD_AGENT_LENGTH) {
+            return NextResponse.json(
+                { error: `Agent is too long. Maximum ${MAX_CHAT_THREAD_AGENT_LENGTH} characters allowed.` },
+                { status: 400 }
+            );
+        }
 
         const { data, error } = await (supabase as any)
             .from("chat_threads")
@@ -49,10 +60,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ data });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("POST /api/chat/threads unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});

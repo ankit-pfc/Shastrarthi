@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireUser } from "@/lib/server-supabase";
+import { withAuth } from "@/lib/api-utils";
 
-export async function GET() {
+const MAX_NOTE_CONTENT_LENGTH = 10_000;
+
+export const GET = withAuth(async (_request, _context, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const db = supabase as any;
         const { data, error } = await db
             .from("notes")
@@ -18,17 +19,13 @@ export async function GET() {
 
         return NextResponse.json({ data: data ?? [] });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("GET /api/notes unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest, _context, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const db = supabase as any;
         const body = await request.json();
         const verseId = body?.verseId as string | undefined;
@@ -36,6 +33,12 @@ export async function POST(request: NextRequest) {
 
         if (!verseId || !content?.trim()) {
             return NextResponse.json({ error: "Missing verseId or content" }, { status: 400 });
+        }
+        if (content.length > MAX_NOTE_CONTENT_LENGTH) {
+            return NextResponse.json(
+                { error: `Content is too long. Maximum ${MAX_NOTE_CONTENT_LENGTH} characters allowed.` },
+                { status: 400 }
+            );
         }
 
         const { data, error } = await db
@@ -55,17 +58,13 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ data });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("POST /api/notes unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});
 
-export async function PUT(request: NextRequest) {
+export const PUT = withAuth(async (request: NextRequest, _context, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const db = supabase as any;
         const body = await request.json();
         const noteId = body?.noteId as string | undefined;
@@ -73,6 +72,12 @@ export async function PUT(request: NextRequest) {
 
         if (!noteId || !content?.trim()) {
             return NextResponse.json({ error: "Missing noteId or content" }, { status: 400 });
+        }
+        if (content.length > MAX_NOTE_CONTENT_LENGTH) {
+            return NextResponse.json(
+                { error: `Content is too long. Maximum ${MAX_NOTE_CONTENT_LENGTH} characters allowed.` },
+                { status: 400 }
+            );
         }
 
         const { data, error } = await db
@@ -90,17 +95,13 @@ export async function PUT(request: NextRequest) {
 
         return NextResponse.json({ data });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("PUT /api/notes unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});
 
-export async function DELETE(request: NextRequest) {
+export const DELETE = withAuth(async (request: NextRequest, _context, { supabase, user }) => {
     try {
-        const { supabase, user } = await requireUser();
         const db = supabase as any;
         const body = await request.json().catch(() => ({}));
         const noteId = body?.noteId as string | undefined;
@@ -118,10 +119,7 @@ export async function DELETE(request: NextRequest) {
 
         return NextResponse.json({ ok: true });
     } catch (error) {
-        if (error instanceof Error && error.message === "UNAUTHORIZED") {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
         console.error("DELETE /api/notes unexpected error:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});

@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateSynthesisResponse, isConfigured, LearnLMError } from "@/lib/learnlm";
+import { withAuth } from "@/lib/api-utils";
+import { buildRateLimitHeaders, checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
-export async function POST(request: NextRequest) {
+const MAX_SYNTH_QUERY_LENGTH = 2000;
+const MAX_TEXT_TITLE_LENGTH = 300;
+const MAX_TEXT_DESCRIPTION_LENGTH = 5000;
+const AI_RATE_LIMIT = { windowMs: 60_000, maxRequests: 20 } as const;
+
+export const POST = withAuth(async (request: NextRequest, _context, { user }) => {
     const encoder = new TextEncoder();
 
     try {
@@ -13,13 +20,39 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Missing query" }, { status: 400 });
         }
 
+        if (query.length > MAX_SYNTH_QUERY_LENGTH) {
+            return NextResponse.json(
+                { error: `Query is too long. Maximum ${MAX_SYNTH_QUERY_LENGTH} characters allowed.` },
+                { status: 400 }
+            );
+        }
+
+        const ip = getClientIp(request);
+        const rateLimitResult = checkRateLimit(`ai:${user.id}:${ip}`, AI_RATE_LIMIT);
+        if (!rateLimitResult.allowed) {
+            return NextResponse.json(
+                { error: "Rate limit exceeded. Please try again shortly." },
+                {
+                    status: 429,
+                    headers: {
+                        ...buildRateLimitHeaders(rateLimitResult),
+                        "Retry-After": String(rateLimitResult.retryAfterSeconds),
+                    },
+                }
+            );
+        }
+
         if (!isConfigured()) {
             return NextResponse.json({ error: "AI service is not configured." }, { status: 503 });
         }
 
         const textSummaries = texts
             .slice(0, 8)
-            .map((text, index) => `${index + 1}. ${text.title_en}: ${text.description ?? "No summary available."}`)
+            .map((text, index) => {
+                const title = (text.title_en ?? "").slice(0, MAX_TEXT_TITLE_LENGTH);
+                const description = (text.description ?? "No summary available.").slice(0, MAX_TEXT_DESCRIPTION_LENGTH);
+                return `${index + 1}. ${title}: ${description}`;
+            })
             .join("\n");
 
         const stream = new ReadableStream({
@@ -46,10 +79,11 @@ export async function POST(request: NextRequest) {
                 "Content-Type": "text/event-stream",
                 "Cache-Control": "no-cache, no-transform",
                 Connection: "keep-alive",
+                ...buildRateLimitHeaders(rateLimitResult),
             },
         });
     } catch (error) {
         console.error("POST /api/synthesize failed:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-}
+});

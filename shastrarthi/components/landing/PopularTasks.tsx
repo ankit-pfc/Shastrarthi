@@ -21,8 +21,9 @@ export default function PopularTasks() {
                     {POPULAR_TASKS.map((task) => {
                         const Icon = task.icon;
                         return (
-                            <button
+                            <Link
                                 key={task.title}
+                                href={task.href}
                                 className="text-left bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
                             >
                                 <div className="p-4 min-h-[132px]">
@@ -33,7 +34,7 @@ export default function PopularTasks() {
                                     <Icon className="h-4 w-4" />
                                     Run Task
                                 </div>
-                            </button>
+                            </Link>
                         );
                     })}
                 </div>

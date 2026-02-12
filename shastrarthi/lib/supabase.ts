@@ -194,6 +194,84 @@ export interface Database {
                     updated_at?: string;
                 };
             };
+            chat_threads: {
+                Row: {
+                    id: string;
+                    user_id: string;
+                    title: string;
+                    agent: string | null;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    user_id: string;
+                    title: string;
+                    agent?: string | null;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    user_id?: string;
+                    title?: string;
+                    agent?: string | null;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+            };
+            chat_messages: {
+                Row: {
+                    id: string;
+                    thread_id: string;
+                    user_id: string;
+                    role: "user" | "assistant";
+                    content: string;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    thread_id: string;
+                    user_id: string;
+                    role: "user" | "assistant";
+                    content: string;
+                    created_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    thread_id?: string;
+                    user_id?: string;
+                    role?: "user" | "assistant";
+                    content?: string;
+                    created_at?: string;
+                };
+            };
+            notebooks: {
+                Row: {
+                    id: string;
+                    user_id: string;
+                    title: string;
+                    content: string;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    user_id: string;
+                    title: string;
+                    content?: string;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    user_id?: string;
+                    title?: string;
+                    content?: string;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+            };
             reading_progress: {
                 Row: {
                     user_id: string;
@@ -234,4 +312,7 @@ export type Profile = Tables["profiles"]["Row"];
 export type Bookmark = Tables["bookmarks"]["Row"];
 export type Note = Tables["notes"]["Row"];
 export type UserText = Tables["user_texts"]["Row"];
+export type ChatThread = Tables["chat_threads"]["Row"];
+export type ChatMessage = Tables["chat_messages"]["Row"];
+export type Notebook = Tables["notebooks"]["Row"];
 export type ReadingProgress = Tables["reading_progress"]["Row"];

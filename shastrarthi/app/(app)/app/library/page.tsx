@@ -1,140 +1,48 @@
-"use client";
+import LibraryPageClient, { type LibraryData } from "@/components/library/LibraryPageClient";
+import { requireUser } from "@/lib/server-supabase";
 
-import { useEffect, useMemo, useState } from "react";
-import SavedTexts from "@/components/library/SavedTexts";
-import BookmarksList from "@/components/library/BookmarksList";
-import NotesList from "@/components/library/NotesList";
+export default async function AppLibraryPage() {
+    const { supabase, user } = await requireUser();
+    const db = supabase as any;
 
-type LibraryData = {
-    savedTexts: any[];
-    bookmarks: any[];
-    notes: any[];
-};
+    const [{ data: savedTexts }, { data: bookmarks }, { data: notes }] = await Promise.all([
+        db
+            .from("user_texts")
+            .select("saved_at, text:texts(id, slug, title_en, title_sa, category, verse_count)")
+            .eq("user_id", user.id)
+            .order("saved_at", { ascending: false }),
+        db
+            .from("bookmarks")
+            .select("id, created_at, verse:verses(ref, translation_en, text:texts(slug, title_en))")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false }),
+        db
+            .from("notes")
+            .select("id, content, created_at, verse:verses(ref, translation_en, text:texts(slug, title_en))")
+            .eq("user_id", user.id)
+            .order("updated_at", { ascending: false }),
+    ]);
 
-export default function AppLibraryPage() {
-    const [activeTab, setActiveTab] = useState<"saved" | "bookmarks" | "notes">("saved");
-    const [isLoading, setIsLoading] = useState(true);
-    const [libraryData, setLibraryData] = useState<LibraryData>({
-        savedTexts: [],
-        bookmarks: [],
-        notes: [],
-    });
-
-    const loadLibrary = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch("/api/library");
-            if (!response.ok) {
-                throw new Error("Could not load library");
-            }
-            const payload = (await response.json()) as { data: LibraryData };
-            setLibraryData(payload.data);
-        } catch (error) {
-            console.error("Library fetch failed:", error);
-        } finally {
-            setIsLoading(false);
-        }
+    const initialData: LibraryData = {
+        savedTexts: (savedTexts ?? []).map((row: any) => row.text).filter(Boolean),
+        bookmarks: (bookmarks ?? []).map((row: any) => ({
+            id: row.id,
+            verseRef: row.verse?.ref ?? "",
+            verseTranslation: row.verse?.translation_en ?? "",
+            textSlug: row.verse?.text?.slug ?? "",
+            textTitle: row.verse?.text?.title_en ?? "",
+            createdAt: row.created_at,
+        })),
+        notes: (notes ?? []).map((row: any) => ({
+            id: row.id,
+            content: row.content,
+            verseRef: row.verse?.ref ?? "",
+            verseTranslation: row.verse?.translation_en ?? "",
+            textSlug: row.verse?.text?.slug ?? "",
+            textTitle: row.verse?.text?.title_en ?? "",
+            createdAt: row.created_at,
+        })),
     };
 
-    useEffect(() => {
-        void loadLibrary();
-    }, []);
-
-    const stats = useMemo(
-        () => ({
-            savedTexts: libraryData.savedTexts.length,
-            bookmarks: libraryData.bookmarks.length,
-            notes: libraryData.notes.length,
-        }),
-        [libraryData]
-    );
-
-    const removeSavedText = async (textId: string) => {
-        await fetch("/api/library", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ textId }),
-        });
-        await loadLibrary();
-    };
-
-    const removeBookmark = async (bookmarkId: string) => {
-        await fetch("/api/bookmarks", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ bookmarkId }),
-        });
-        await loadLibrary();
-    };
-
-    const removeNote = async (noteId: string) => {
-        await fetch("/api/notes", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ noteId }),
-        });
-        await loadLibrary();
-    };
-
-    return (
-        <div className="space-y-6">
-            <div>
-                <h1 className="text-h2 font-serif font-semibold text-gray-900 mb-2">My Library</h1>
-                <p className="text-gray-600">Collections, saved texts, bookmarks, and recent study activity.</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <section className="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-                    <div className="mb-4 flex flex-wrap gap-2">
-                        <button
-                            onClick={() => setActiveTab("saved")}
-                            className={`px-3 py-1.5 rounded-md text-sm ${activeTab === "saved" ? "bg-orange-600 text-white" : "border border-gray-200 text-gray-700 hover:bg-gray-50"}`}
-                        >
-                            Saved Texts
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("bookmarks")}
-                            className={`px-3 py-1.5 rounded-md text-sm ${activeTab === "bookmarks" ? "bg-orange-600 text-white" : "border border-gray-200 text-gray-700 hover:bg-gray-50"}`}
-                        >
-                            Bookmarks
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("notes")}
-                            className={`px-3 py-1.5 rounded-md text-sm ${activeTab === "notes" ? "bg-orange-600 text-white" : "border border-gray-200 text-gray-700 hover:bg-gray-50"}`}
-                        >
-                            Notes
-                        </button>
-                    </div>
-
-                    {isLoading ? (
-                        <p className="text-sm text-gray-500">Loading library...</p>
-                    ) : (
-                        <>
-                            {activeTab === "saved" && (
-                                <SavedTexts texts={libraryData.savedTexts} onRemove={removeSavedText} />
-                            )}
-                            {activeTab === "bookmarks" && (
-                                <BookmarksList
-                                    bookmarks={libraryData.bookmarks}
-                                    onRemove={removeBookmark}
-                                />
-                            )}
-                            {activeTab === "notes" && (
-                                <NotesList notes={libraryData.notes} onRemove={removeNote} />
-                            )}
-                        </>
-                    )}
-                </section>
-
-                <section className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-                    <h2 className="font-semibold text-gray-900 mb-3">Quick Stats</h2>
-                    <div className="space-y-2 text-sm text-gray-600">
-                        <p>Saved Texts: {stats.savedTexts}</p>
-                        <p>Bookmarks: {stats.bookmarks}</p>
-                        <p>Notes: {stats.notes}</p>
-                    </div>
-                </section>
-            </div>
-        </div>
-    );
+    return <LibraryPageClient initialData={initialData} />;
 }

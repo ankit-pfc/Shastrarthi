@@ -1,76 +1,17 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import SectionContainer from "@/components/ui/SectionContainer";
+import type { Text } from "@/lib/supabase";
 
 interface FeaturedText {
     slug: string;
     title_en: string;
-    title_sa: string;
+    title_sa: string | null;
     category: string;
     difficulty: string;
-    description: string;
+    description: string | null;
     verse_count: number;
-    coverImageUrl?: string;
 }
-
-const FEATURED_TEXTS: FeaturedText[] = [
-    {
-        slug: "bhagavad-gita-chapter-2",
-        title_en: "Bhagavad Gita - Chapter 2",
-        title_sa: "भगवद्गीता - द्वितीय अध्याय: सांख्ययोग",
-        category: "Itihasa",
-        difficulty: "beginner",
-        description: "Introduces concepts of eternal soul (atman) and path of knowledge. Arjuna receives teachings on nature of self and performing one's duty without attachment.",
-        verse_count: 7,
-    },
-    {
-        slug: "yoga-sutras",
-        title_en: "Yoga Sutras of Patanjali",
-        title_sa: "पतञ्जलि योगसूत्र",
-        category: "Yoga",
-        difficulty: "intermediate",
-        description: "The foundational text of Yoga philosophy. It outlines the eight limbs (Ashtanga Yoga) and provides a systematic approach to spiritual liberation.",
-        verse_count: 8,
-    },
-    {
-        slug: "mandukya-upanishad",
-        title_en: "Mandukya Upanishad",
-        title_sa: "माण्डूक्योपनिषत्",
-        category: "Upanishad",
-        difficulty: "advanced",
-        description: "The shortest Upanishad with just 12 verses. Expounds four states of consciousness (waking, dreaming, deep sleep, and turiya) and Om as Brahman.",
-        verse_count: 7,
-    },
-    {
-        slug: "isha-upanishad",
-        title_en: "Isha Upanishad",
-        title_sa: "ईशोपनिषत्",
-        category: "Upanishad",
-        difficulty: "beginner",
-        description: "One of shortest Upanishads with 18 verses. Teaches that Supreme Being pervades everything and to live without attachment.",
-        verse_count: 18,
-    },
-    {
-        slug: "hatha-yoga-pradipika",
-        title_en: "Hatha Yoga Pradipika",
-        title_sa: "हठयोगप्रदीपिका",
-        category: "Yoga",
-        difficulty: "intermediate",
-        description: "A classic manual on Hatha Yoga, covering asanas, pranayama, mudras, and samadhi. Essential for understanding physical yoga practices.",
-        verse_count: 10,
-    },
-    {
-        slug: "vivekachudamani",
-        title_en: "Vivekachudamani",
-        title_sa: "विवेकचूडामणि",
-        category: "Vedanta",
-        difficulty: "advanced",
-        description: "A masterpiece by Adi Shankaracharya on discrimination between real and unreal. A guide to self-realization.",
-        verse_count: 12,
-    },
-];
 
 function getCategoryColor(category: string) {
     switch (category) {
@@ -94,7 +35,11 @@ function getCategoryColor(category: string) {
     }
 }
 
-export default function FeaturedTexts() {
+interface FeaturedTextsProps {
+    texts: Pick<Text, "slug" | "title_en" | "title_sa" | "category" | "difficulty" | "description" | "verse_count">[];
+}
+
+export default function FeaturedTexts({ texts }: FeaturedTextsProps) {
     return (
         <SectionContainer background="white" padding="lg">
             <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
@@ -117,7 +62,7 @@ export default function FeaturedTexts() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {FEATURED_TEXTS.map((text) => {
+                    {texts.map((text) => {
                         const categoryStyle = getCategoryColor(text.category);
 
                         return (
@@ -138,10 +83,10 @@ export default function FeaturedTexts() {
                                     {text.title_en}
                                 </h3>
                                 <p className="text-sm text-gray-500 font-devanagari mb-2 line-clamp-1">
-                                    {text.title_sa}
+                                    {text.title_sa ?? " "}
                                 </p>
                                 <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed mb-4 flex-grow">
-                                    {text.description}
+                                    {text.description ?? "Explore this text in the reader and discover key verses."}
                                 </p>
                                 <Link
                                     href={`/reader/${text.slug}`}

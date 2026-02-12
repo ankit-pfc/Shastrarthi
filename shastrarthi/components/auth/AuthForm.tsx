@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Mail, Lock, User, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface AuthFormProps {
     mode: "login" | "signup";
@@ -19,6 +19,7 @@ interface ValidationErrors {
 export default function AuthForm({ mode }: AuthFormProps) {
     const { signIn, signUp, signInWithGoogle, user, loading: authLoading } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
@@ -27,6 +28,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
     const [success, setSuccess] = useState("");
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
     const [touched, setTouched] = useState<Record<string, boolean>>({});
+    const requestedRedirect = searchParams.get("redirect");
+    const redirectTo = requestedRedirect?.startsWith("/") ? requestedRedirect : "/app";
 
     // Clear success message after 5 seconds
     useEffect(() => {
@@ -38,10 +41,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
     useEffect(() => {
         if (!authLoading && user) {
-            router.push("/app");
+            router.push(redirectTo);
             router.refresh();
         }
-    }, [authLoading, user, router]);
+    }, [authLoading, user, router, redirectTo]);
 
     const validateEmail = (email: string): string | undefined => {
         if (!email) return "Email is required";
@@ -133,7 +136,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
         setLoading(true);
 
         try {
-            await signInWithGoogle();
+            await signInWithGoogle(redirectTo);
         } catch (err: any) {
             setError(err.message || "An error occurred with Google sign in.");
         } finally {
