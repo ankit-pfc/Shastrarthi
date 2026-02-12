@@ -16,6 +16,17 @@ export type VerseSearchRow = {
     } | null;
 };
 
+type RawVerseSearchRow = Omit<VerseSearchRow, "text"> & {
+    text:
+        | VerseSearchRow["text"]
+        | Array<{
+              slug: string;
+              title_en: string;
+              category: string;
+              tradition: string | null;
+          }>;
+};
+
 async function measure<T>(label: string, fn: () => Promise<T>): Promise<T> {
     const start = Date.now();
     const result = await fn();
@@ -46,7 +57,11 @@ export async function searchVersesByQuery(query: string, limit = 30): Promise<Ve
             throw new Error(`Failed to search verses: ${error.message}`);
         }
 
-        return (data ?? []) as VerseSearchRow[];
+        const rows = (data ?? []) as RawVerseSearchRow[];
+        return rows.map((row) => ({
+            ...row,
+            text: Array.isArray(row.text) ? (row.text[0] ?? null) : row.text,
+        }));
     });
 }
 

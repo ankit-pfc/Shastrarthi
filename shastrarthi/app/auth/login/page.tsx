@@ -10,6 +10,6 @@ export default function LoginPage() {
 }
 
 export const metadata = {
-    title: "Sign In - Shastrarthi",
-    description: "Sign in to your Shastrarthi account",
+    title: "Sign In",
+    description: "Sign in to Shastrarthi and continue studying the Vedas, Upanishads, Bhagavad Gita, and more with AI-powered explanations.",
 };

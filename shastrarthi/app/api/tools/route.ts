@@ -3,6 +3,7 @@ import { generateSynthesisResponse, isConfigured, resolvePrompt } from "@/lib/le
 import { withAuth } from "@/lib/api-utils";
 import { buildRateLimitHeaders, checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { getSiteUrl } from "@/lib/site";
+import { fetchTextsByIds } from "@/lib/services/texts";
 
 const MAX_TOOL_FIELD_LENGTH = 5000;
 const AI_RATE_LIMIT = { windowMs: 60_000, maxRequests: 20 } as const;
@@ -14,6 +15,18 @@ const MIN_PUBLISH_CONTENT_LENGTH = 300;
 const DEDUPE_SOURCE_NORMALIZE_LENGTH = 500;
 
 type ToolMode = "simplify" | "translate";
+
+interface ExtractedInsight {
+    text: string;
+    ref: string;
+    insight: string;
+}
+
+interface ExtractVerseRow {
+    ref: string;
+    sanskrit: string | null;
+    translation_en: string;
+}
 
 function normalizeLanguage(language: string | undefined): string {
     const trimmed = (language ?? "").trim();
@@ -194,6 +207,7 @@ export const POST = withAuth(async (request: NextRequest, _context, { user, supa
         let prompt = "";
         let context = "";
         let promptConfigId = "synthesis";
+        let variables: Record<string, string> = {};
         let pseoMode: ToolMode | null = null;
         let pseoLanguage = "English";
         let pseoSourceQuery = "";
@@ -236,14 +250,10 @@ export const POST = withAuth(async (request: NextRequest, _context, { user, supa
             }
             const language = normalizeLanguage(targetLanguage.value);
             const simplificationLevel = normalizeLevel(level.value);
-            prompt = `Simplify the given passage into ${language} at ${simplificationLevel} level while preserving philosophical meaning.
-Return:
-- A short heading
-- 1 concise explanation paragraph
-- 3 bullet points
-- Optional glossary (max 3 terms if needed).`;
+            prompt = "Simplify the provided passage.";
             context = inputText.value;
             promptConfigId = "simplify";
+            variables = { language, level: simplificationLevel };
             pseoMode = "simplify";
             pseoLanguage = language;
             pseoSourceQuery = inputText.value;
@@ -260,43 +270,84 @@ Return:
                 return NextResponse.json({ error: "Invalid translate payload." }, { status: 400 });
             }
             const language = normalizeLanguage(targetLanguage.value);
-            prompt = `Translate the given passage into ${language} while preserving meaning.
-Return:
-- Original line (if provided)
-- Direct translation
-- Easy explanation in ${language}
-- Note on key Sanskrit terms that should remain untranslated, if any.`;
+            prompt = "Translate the provided passage.";
             context = inputText.value;
             promptConfigId = "translate";
+            variables = { language };
             pseoMode = "translate";
             pseoLanguage = language;
             pseoSourceQuery = inputText.value;
         } else if (mode === "extract") {
             const question = readBoundedString(payload, "question", MAX_TOOL_FIELD_LENGTH);
-            const contextText = readBoundedString(payload, "context", MAX_TOOL_FIELD_LENGTH);
-            if (!question.ok || !contextText.ok) {
+            if (!question.ok) {
                 return NextResponse.json(
                     { error: `Payload fields must be strings up to ${MAX_TOOL_FIELD_LENGTH} characters.` },
                     { status: 400 }
                 );
             }
-            prompt = `Extract concise insights and verse-like references relevant to this question: ${question.value}`;
-            context = contextText.value;
+
+            const textIds = payload?.textIds as string[] | undefined;
+            const datasetId = payload?.datasetId as string | undefined;
+
+            let extractionContext = `Question: ${question.value}\n\nSources:`;
+
+            if (textIds && textIds.length > 0) {
+                const texts = await fetchTextsByIds(textIds);
+                for (const text of texts) {
+                    const { data: verses, error: versesError } = await supabase
+                        .from("verses")
+                        .select("ref, sanskrit, translation_en")
+                        .eq("text_id", text.id)
+                        .limit(50); // Limit verses per text to avoid excessive context
+
+                    if (!versesError && verses) {
+                        const verseRows = verses as ExtractVerseRow[];
+                        extractionContext += `\n\nText: ${text.title_en} (${text.category})`;
+                        for (const verse of verseRows) {
+                            extractionContext += `\n- ${verse.ref}: ${verse.translation_en}`;
+                            if (verse.sanskrit) extractionContext += ` (Sanskrit: ${verse.sanskrit})`;
+                        }
+                    } else {
+                        console.warn(`Failed to fetch verses for text ${text.id}:`, versesError);
+                    }
+                }
+            }
+
+            if (datasetId) {
+                const { data: dataset, error: datasetError } = await (supabase as any)
+                    .from("extract_datasets")
+                    .select("data")
+                    .eq("id", datasetId)
+                    .eq("user_id", user.id)
+                    .single();
+
+                if (!datasetError && dataset && Array.isArray(dataset.data)) {
+                    extractionContext += `\n\nUser Uploaded Data (Dataset ID: ${datasetId}):`;
+                    for (const item of dataset.data.slice(0, 100)) { // Limit items from dataset
+                        extractionContext += `\n- ${JSON.stringify(item)}`;
+                    }
+                } else {
+                    console.warn(`Failed to fetch dataset ${datasetId}:`, datasetError);
+                }
+            }
+            
+            if (textIds?.length === 0 && !datasetId) {
+                return NextResponse.json({ error: "At least one text or dataset must be provided for extraction." }, { status: 400 });
+            }
+
+            prompt = question.value;
+            context = extractionContext;
             promptConfigId = "extract";
+
         } else {
             return NextResponse.json({ error: "Unsupported mode" }, { status: 400 });
         }
 
-        const promptConfig = resolvePrompt(promptConfigId);
+        const promptConfig = resolvePrompt(promptConfigId, variables);
         const content = await generateSynthesisResponse(prompt, context, promptConfig);
 
         let publicPage: { slug: string; title: string; url: string } | null = null;
-        const shouldPublish =
-            pseoMode &&
-            pseoSourceQuery.trim() &&
-            content.trim() &&
-            content.length >= MIN_PUBLISH_CONTENT_LENGTH;
-        if (shouldPublish) {
+        if (pseoMode && pseoSourceQuery.trim() && content.trim() && content.length >= MIN_PUBLISH_CONTENT_LENGTH) {
             const normalizedSource = normalizeSourceForDedupe(pseoSourceQuery);
             const existing = await findExistingPublicPage(supabase, pseoMode, pseoLanguage, normalizedSource);
             if (existing) {
@@ -314,8 +365,31 @@ Return:
                 });
             }
         }
+        
+        let responseContent: ExtractedInsight[] | string = content;
+        if (mode === "extract") {
+            try {
+                const parsedContent = JSON.parse(content);
+                if (
+                    !Array.isArray(parsedContent) ||
+                    !parsedContent.every(
+                        (item) =>
+                            typeof item?.text === "string" &&
+                            typeof item?.ref === "string" &&
+                            typeof item?.insight === "string"
+                    )
+                ) {
+                    throw new Error("Invalid JSON format for extracted insights.");
+                }
+                responseContent = parsedContent as ExtractedInsight[];
+            } catch (parseError) {
+                console.error("Failed to parse LLM response for extraction:", parseError);
+                return NextResponse.json({ error: "Failed to process extraction results from AI." }, { status: 500 });
+            }
+        }
+
         return NextResponse.json(
-            { data: { content, publicPage } },
+            { data: { content: responseContent, publicPage } },
             {
                 headers: {
                     ...buildRateLimitHeaders(rateLimitResult),

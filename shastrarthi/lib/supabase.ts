@@ -333,6 +333,187 @@ export interface Database {
                     completed_at?: string | null;
                 };
             };
+            extract_datasets: {
+                Row: {
+                    id: string;
+                    user_id: string;
+                    name: string;
+                    data: Json;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    user_id: string;
+                    name: string;
+                    data?: Json;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    user_id?: string;
+                    name?: string;
+                    data?: Json;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+            };
+            topics: {
+                Row: {
+                    id: string;
+                    slug: string;
+                    name: string;
+                    description: string | null;
+                    icon: string | null;
+                    category: string | null;
+                    parent_topic_id: string | null;
+                    sort_order: number;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    slug: string;
+                    name: string;
+                    description?: string | null;
+                    icon?: string | null;
+                    category?: string | null;
+                    parent_topic_id?: string | null;
+                    sort_order?: number;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    slug?: string;
+                    name?: string;
+                    description?: string | null;
+                    icon?: string | null;
+                    category?: string | null;
+                    parent_topic_id?: string | null;
+                    sort_order?: number;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+            };
+            history_entities: {
+                Row: {
+                    id: string;
+                    slug: string;
+                    entity_type: string;
+                    title: string;
+                    subtitle: string | null;
+                    summary: string | null;
+                    content_md: string | null;
+                    period_label: string | null;
+                    period_start_year: number | null;
+                    period_end_year: number | null;
+                    geography: string | null;
+                    tags: string[] | null;
+                    evidence_sources: string[] | null;
+                    featured_image_url: string | null;
+                    meta_description: string | null;
+                    keywords: string[] | null;
+                    is_published: boolean;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    slug: string;
+                    entity_type: string;
+                    title: string;
+                    subtitle?: string | null;
+                    summary?: string | null;
+                    content_md?: string | null;
+                    period_label?: string | null;
+                    period_start_year?: number | null;
+                    period_end_year?: number | null;
+                    geography?: string | null;
+                    tags?: string[] | null;
+                    evidence_sources?: string[] | null;
+                    featured_image_url?: string | null;
+                    meta_description?: string | null;
+                    keywords?: string[] | null;
+                    is_published?: boolean;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    slug?: string;
+                    entity_type?: string;
+                    title?: string;
+                    subtitle?: string | null;
+                    summary?: string | null;
+                    content_md?: string | null;
+                    period_label?: string | null;
+                    period_start_year?: number | null;
+                    period_end_year?: number | null;
+                    geography?: string | null;
+                    tags?: string[] | null;
+                    evidence_sources?: string[] | null;
+                    featured_image_url?: string | null;
+                    meta_description?: string | null;
+                    keywords?: string[] | null;
+                    is_published?: boolean;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+            };
+            history_relations: {
+                Row: {
+                    id: string;
+                    from_entity_id: string;
+                    to_entity_id: string;
+                    relation_type: string;
+                    description: string | null;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    from_entity_id: string;
+                    to_entity_id: string;
+                    relation_type: string;
+                    description?: string | null;
+                    created_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    from_entity_id?: string;
+                    to_entity_id?: string;
+                    relation_type?: string;
+                    description?: string | null;
+                    created_at?: string;
+                };
+            };
+            history_timelines: {
+                Row: {
+                    id: string;
+                    slug: string;
+                    title: string;
+                    description: string | null;
+                    entity_ids: string[] | null;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    slug: string;
+                    title: string;
+                    description?: string | null;
+                    entity_ids?: string[] | null;
+                    created_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    slug?: string;
+                    title?: string;
+                    description?: string | null;
+                    entity_ids?: string[] | null;
+                    created_at?: string;
+                };
+            };
         };
         Views: {
             [_ in never]: never;
@@ -359,3 +540,8 @@ export type ShastraBook = Tables["notebooks"]["Row"];
 export type Notebook = ShastraBook;
 export type PublicPage = Tables["public_pages"]["Row"];
 export type ReadingProgress = Tables["reading_progress"]["Row"];
+export type ExtractDataset = Tables["extract_datasets"]["Row"];
+export type Topic = Tables["topics"]["Row"];
+export type HistoryEntity = Tables["history_entities"]["Row"];
+export type HistoryRelation = Tables["history_relations"]["Row"];
+export type HistoryTimeline = Tables["history_timelines"]["Row"];

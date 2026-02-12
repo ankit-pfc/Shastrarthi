@@ -146,12 +146,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     {/* Header */}
                     <div className="text-center mb-5">
                         <h1 className="text-2xl font-semibold font-serif text-gray-900 mb-1.5">
-                            {mode === "login" ? "Welcome Back" : "Join Shastrarthi"}
+                            {mode === "login" ? "Continue Your Study" : "Start Studying for Free"}
                         </h1>
                         <p className="text-base text-gray-600 leading-relaxed">
                             {mode === "login"
-                                ? "Sign in to continue your spiritual journey"
-                                : "Create an account to begin exploring ancient wisdom"}
+                                ? "Pick up right where you left off."
+                                : "Save your progress, bookmark verses, and get AI explanations."}
                         </p>
                     </div>
 
@@ -179,6 +179,31 @@ export default function AuthForm({ mode }: AuthFormProps) {
                             </Link>
                         </div>
                     ) : (
+                        <>
+                        {/* Google Auth first — lowest friction */}
+                        <button
+                            onClick={handleGoogleSignIn}
+                            disabled={loading}
+                            className="w-full flex h-10 items-center justify-center gap-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <svg className="h-5 w-5" viewBox="0 0 24 24">
+                                <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.9-5.5 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.5 14.6 2.6 12 2.6A9.4 9.4 0 0 0 2.6 12 9.4 9.4 0 0 0 12 21.4c5.4 0 9-3.8 9-9 0-.6-.1-1.1-.2-1.6H12z" />
+                                <path fill="#34A853" d="M2.6 7.9l3.2 2.3c.9-1.8 2.7-3 5.2-3 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.5 14.6 2.6 12 2.6c-3.6 0-6.8 2-8.4 5.3z" />
+                                <path fill="#FBBC05" d="M12 21.4c2.6 0 4.8-.9 6.4-2.5l-3-2.4c-.8.6-1.8 1-3.4 1-2.5 0-4.6-1.7-5.3-3.9l-3.2 2.5c1.6 3.3 4.9 5.3 8.5 5.3z" />
+                                <path fill="#4285F4" d="M21 12.4c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.1 2.6-2.1 3.5l3 2.4c1.7-1.6 2.6-4 2.6-8.2z" />
+                            </svg>
+                            <span className="text-gray-700">Continue with Google</span>
+                        </button>
+
+                        <div className="relative my-4">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-200" />
+                            </div>
+                            <div className="relative flex justify-center">
+                                <span className="bg-white px-4 text-sm text-gray-500">Or use email</span>
+                            </div>
+                        </div>
+
                         <form onSubmit={handleSubmit} className="space-y-4">
                         {mode === "signup" && (
                             <div>
@@ -307,38 +332,19 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                 </>
                             ) : (
                                 <>
-                                    {mode === "login" ? "Sign In" : "Create Account"}
+                                    {mode === "login" ? "Sign In" : "Start Exploring Free"}
                                 </>
                             )}
                         </button>
                         </form>
+                        </>
                     )}
 
+                    {/* Trust signals */}
                     {!signupComplete && (
-                        <>
-                            <div className="relative my-5">
-                                <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-gray-200" />
-                                </div>
-                                <div className="relative flex justify-center">
-                                    <span className="bg-white px-4 text-sm text-gray-500">Or continue with</span>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={handleGoogleSignIn}
-                                disabled={loading}
-                                className="w-full flex h-10 items-center justify-center gap-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <svg className="h-5 w-5" viewBox="0 0 24 24">
-                                    <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.9-5.5 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.5 14.6 2.6 12 2.6A9.4 9.4 0 0 0 2.6 12 9.4 9.4 0 0 0 12 21.4c5.4 0 9-3.8 9-9 0-.6-.1-1.1-.2-1.6H12z" />
-                                    <path fill="#34A853" d="M2.6 7.9l3.2 2.3c.9-1.8 2.7-3 5.2-3 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.5 14.6 2.6 12 2.6c-3.6 0-6.8 2-8.4 5.3z" />
-                                    <path fill="#FBBC05" d="M12 21.4c2.6 0 4.8-.9 6.4-2.5l-3-2.4c-.8.6-1.8 1-3.4 1-2.5 0-4.6-1.7-5.3-3.9l-3.2 2.5c1.6 3.3 4.9 5.3 8.5 5.3z" />
-                                    <path fill="#4285F4" d="M21 12.4c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.1 2.6-2.1 3.5l3 2.4c1.7-1.6 2.6-4 2.6-8.2z" />
-                                </svg>
-                                <span className="text-gray-700">Google</span>
-                            </button>
-                        </>
+                        <p className="mt-4 text-center text-xs text-gray-400">
+                            Free forever for core features. No credit card needed.
+                        </p>
                     )}
 
                     {/* Footer Link */}

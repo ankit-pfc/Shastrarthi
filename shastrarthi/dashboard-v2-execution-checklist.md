@@ -77,13 +77,13 @@ This is the execution tracker for `shastrarthi_dashboard_v2_32ab3bde.plan.md`.
   - [ ] Bookmark behavior defined (save/tag) and shipped
 
 ### F7 - Reader Fixes
-- **Status:** `[ ]`
+- **Status:** `[x]`
 - **Acceptance criteria**
-  - [ ] GET reading progress endpoint implemented and used on mount
-  - [ ] Existing notes load in batch and show verse indicators
-  - [ ] Note modal supports edit flow (`PUT /api/notes`)
-  - [ ] Keyboard shortcuts: left/right, `b`, `n`
-  - [ ] Jump-to-verse UI works for long texts
+  - [x] GET reading progress endpoint implemented and used on mount
+  - [x] Existing notes load in batch and show verse indicators
+  - [x] Note modal supports edit flow (`PUT /api/notes`)
+  - [x] Keyboard shortcuts: left/right, `b`, `n`
+  - [x] Jump-to-verse UI works for long texts
 
 ### F8 - Extract Insights V2
 - **Status:** `[ ]`

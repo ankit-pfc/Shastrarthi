@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { BookmarkPlus, Compass, Download } from "lucide-react";
 import type { Text } from "@/lib/supabase";
 
 interface AIAnswerProps {
     query: string;
     texts: Text[];
-    contextLabel?: string;
+    contextLabel?: ReactNode;
 }
 
 export default function AIAnswer({ query, texts, contextLabel }: AIAnswerProps) {

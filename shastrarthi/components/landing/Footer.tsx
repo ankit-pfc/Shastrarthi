@@ -8,7 +8,7 @@ export default function Footer() {
                     <div>
                         <h3 className="font-serif text-xl font-semibold text-gray-900">Shastrarthi</h3>
                         <p className="text-sm text-gray-600 mt-2">
-                            Ancient wisdom, illuminated with contextual AI for serious learners and researchers.
+                            Read the Vedas, Upanishads, Bhagavad Gita, and Yoga Sutras verse by verse with AI explanations and multi-tradition comparison. Free for students, practitioners, and researchers.
                         </p>
                     </div>
                     <div>

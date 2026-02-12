@@ -10,6 +10,6 @@ export default function SignupPage() {
 }
 
 export const metadata = {
-    title: "Sign Up - Shastrarthi",
-    description: "Create your Shastrarthi account",
+    title: "Create Free Account",
+    description: "Create a free Shastrarthi account to read Sanskrit texts verse-by-verse, get AI explanations, compare traditions, and save your study progress.",
 };

@@ -61,6 +61,32 @@ describe("protected API routes", () => {
         await expect(response.json()).resolves.toEqual({ error: "Invalid payload" });
     });
 
+    it("returns 400 for reading progress GET without textId", async () => {
+        authContext.supabase = { from: vi.fn() };
+        const route = await import("@/app/api/reading-progress/route");
+        const response = await route.GET(makeJsonRequest("http://localhost/api/reading-progress", "GET"));
+
+        expect(response.status).toBe(400);
+        await expect(response.json()).resolves.toEqual({ error: "Missing textId" });
+    });
+
+    it("returns reading progress for valid textId", async () => {
+        const maybeSingle = vi.fn().mockResolvedValue({ data: { last_verse_index: 12, completed_at: null }, error: null });
+        const eqLevelTwo = vi.fn(() => ({ maybeSingle }));
+        const eqLevelOne = vi.fn(() => ({ eq: eqLevelTwo }));
+        const select = vi.fn(() => ({ eq: eqLevelOne }));
+        authContext.supabase = { from: vi.fn(() => ({ select })) };
+
+        const route = await import("@/app/api/reading-progress/route");
+        const response = await route.GET(makeJsonRequest("http://localhost/api/reading-progress?textId=t-1", "GET"));
+        const payload = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(payload.data.textId).toBe("t-1");
+        expect(payload.data.lastVerseIndex).toBe(11);
+        expect(payload.data.completed).toBe(false);
+    });
+
     it("returns library aggregate data", async () => {
         const savedOrder = vi.fn().mockResolvedValue({
             data: [{ text: { id: "t1", title_en: "Gita" } }],

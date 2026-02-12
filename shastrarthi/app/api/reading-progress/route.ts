@@ -1,6 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "@/lib/api-utils";
 
+export const GET = withAuth(async (request: NextRequest, _context, { supabase, user }) => {
+    try {
+        const db = supabase as any;
+        const { searchParams } = new URL(request.url);
+        const textId = searchParams.get("textId")?.trim();
+
+        if (!textId) {
+            return NextResponse.json({ error: "Missing textId" }, { status: 400 });
+        }
+
+        const { data, error } = await db
+            .from("reading_progress")
+            .select("text_id, last_verse_index, completed_at")
+            .eq("user_id", user.id)
+            .eq("text_id", textId)
+            .maybeSingle();
+
+        if (error) {
+            console.error("GET /api/reading-progress failed:", error);
+            return NextResponse.json({ error: "Failed to fetch progress" }, { status: 500 });
+        }
+
+        return NextResponse.json({
+            data: {
+                textId,
+                // Stored value represents a 1-based verse position; convert back to 0-based index for UI state.
+                lastVerseIndex: Math.max(0, Number(data?.last_verse_index ?? 0) - 1),
+                completed: Boolean(data?.completed_at),
+            },
+        });
+    } catch (error) {
+        console.error("GET /api/reading-progress unexpected error:", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
+});
+
 export const POST = withAuth(async (request: NextRequest, _context, { supabase, user }) => {
     try {
         const db = supabase as any;

@@ -13,6 +13,10 @@ interface VerseDisplayProps {
     verseId: string;
     isInitiallyBookmarked?: boolean;
     onBookmarkChange?: (verseId: string, isBookmarked: boolean) => void;
+    existingNote?: { id: string; content: string } | null;
+    onNoteSaved?: (verseId: string, note: { id: string; content: string }) => void;
+    openNoteSignal?: number;
+    toggleBookmarkSignal?: number;
 }
 
 export default function VerseDisplay({
@@ -23,11 +27,16 @@ export default function VerseDisplay({
     verseId,
     isInitiallyBookmarked = false,
     onBookmarkChange,
+    existingNote = null,
+    onNoteSaved,
+    openNoteSignal = 0,
+    toggleBookmarkSignal = 0,
 }: VerseDisplayProps) {
     const [showSanskrit, setShowSanskrit] = useState(true);
     const [showTransliteration, setShowTransliteration] = useState(true);
     const [isBookmarked, setIsBookmarked] = useState(isInitiallyBookmarked);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [note, setNote] = useState<{ id: string; content: string } | null>(existingNote);
 
     const toggleBookmark = async () => {
         try {
@@ -70,6 +79,22 @@ export default function VerseDisplay({
         setIsBookmarked(isInitiallyBookmarked);
     }, [isInitiallyBookmarked, verseId]);
 
+    useEffect(() => {
+        setNote(existingNote);
+    }, [existingNote, verseId]);
+
+    useEffect(() => {
+        if (openNoteSignal > 0) {
+            setIsNoteModalOpen(true);
+        }
+    }, [openNoteSignal]);
+
+    useEffect(() => {
+        if (toggleBookmarkSignal > 0) {
+            void toggleBookmark();
+        }
+    }, [toggleBookmarkSignal]);
+
     const toggleNote = () => {
         setIsNoteModalOpen(true);
     };
@@ -77,16 +102,24 @@ export default function VerseDisplay({
     const handleSaveNote = async (content: string) => {
         try {
             const response = await fetch("/api/notes", {
-                method: "POST",
+                method: note ? "PUT" : "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    verseId,
+                    ...(note ? { noteId: note.id } : { verseId }),
                     content,
                 }),
             });
 
             if (!response.ok) {
                 throw new Error("Failed saving note");
+            }
+
+            const payload = await response.json();
+            const savedNoteId = (payload?.data?.id as string | undefined) ?? note?.id;
+            if (savedNoteId) {
+                const updatedNote = { id: savedNoteId, content: content.trim() };
+                setNote(updatedNote);
+                onNoteSaved?.(verseId, updatedNote);
             }
         } catch (error) {
             console.error("Saving note failed:", error);
@@ -120,10 +153,15 @@ export default function VerseDisplay({
                     </button>
                     <button
                         onClick={toggleNote}
-                        className="p-2 rounded-md text-sand-500 hover:text-saffron-600 dark:text-sand-400 dark:hover:text-saffron-400 hover:bg-sand-100 dark:hover:bg-sand-700 transition-colors"
-                        aria-label="Add note"
+                        className={cn(
+                            "p-2 rounded-md transition-colors",
+                            note
+                                ? "text-saffron-600 dark:text-saffron-400 bg-saffron-50 dark:bg-saffron-900/20"
+                                : "text-sand-500 hover:text-saffron-600 dark:text-sand-400 dark:hover:text-saffron-400 hover:bg-sand-100 dark:hover:bg-sand-700"
+                        )}
+                        aria-label={note ? "Edit note" : "Add note"}
                     >
-                        <FileText className="h-4 w-4" />
+                        <FileText className={cn("h-4 w-4", note && "fill-current")} />
                     </button>
 
                     {/* Note Modal */}
@@ -132,6 +170,7 @@ export default function VerseDisplay({
                         onClose={() => setIsNoteModalOpen(false)}
                         verseId={verseId}
                         verseRef={verseRef}
+                        initialContent={note?.content ?? ""}
                         onSave={handleSaveNote}
                     />
                 </div>

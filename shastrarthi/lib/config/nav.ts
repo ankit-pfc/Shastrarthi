@@ -27,6 +27,7 @@ export const APP_NAV_ITEMS: NavItemConfig[] = [
     { label: "Chat with Text", href: "/app/chat", icon: MessageSquareText },
     { label: "Text Discovery", href: "/app/discover", icon: Search },
     { label: "Explore Topics", href: "/app/topics", icon: Compass },
+    { label: "Ancient History", href: "/history", icon: Library },
     { label: "Simplify & Translate", href: "/app/simplifier", icon: Wand2 },
     { label: "Extract Insights", href: "/app/extract", icon: Zap },
 ];

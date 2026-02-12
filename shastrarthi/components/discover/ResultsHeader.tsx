@@ -9,9 +9,10 @@ type SearchMode = "texts" | "verses" | "concepts" | "compare" | "practice" | "al
 interface ResultsHeaderProps {
     query: string;
     depth: DepthMode;
+    mode?: SearchMode;
 }
 
-export default function ResultsHeader({ query, depth }: ResultsHeaderProps) {
+export default function ResultsHeader({ query, depth, mode: modeProp }: ResultsHeaderProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -21,7 +22,7 @@ export default function ResultsHeader({ query, depth }: ResultsHeaderProps) {
         router.push(`/app/discover/${encodeURIComponent(query)}?${params.toString()}`);
     };
 
-    const mode = (searchParams.get("mode") as SearchMode | null) ?? "all";
+    const mode = modeProp ?? ((searchParams.get("mode") as SearchMode | null) ?? "all");
     const modeLabel: Record<SearchMode, string> = {
         all: "All",
         texts: "Texts",

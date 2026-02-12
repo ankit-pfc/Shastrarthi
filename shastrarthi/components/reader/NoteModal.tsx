@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -9,7 +9,8 @@ interface NoteModalProps {
     onClose: () => void;
     verseId: string;
     verseRef: string;
-    onSave?: (content: string) => void;
+    initialContent?: string;
+    onSave?: (content: string) => Promise<void> | void;
 }
 
 export default function NoteModal({
@@ -17,15 +18,27 @@ export default function NoteModal({
     onClose,
     verseId,
     verseRef,
+    initialContent = "",
     onSave,
 }: NoteModalProps) {
-    const [content, setContent] = useState("");
+    const [content, setContent] = useState(initialContent);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const handleSave = () => {
-        if (content.trim()) {
-            onSave?.(content);
+    useEffect(() => {
+        if (isOpen) {
+            setContent(initialContent);
+        }
+    }, [initialContent, isOpen]);
+
+    const handleSave = async () => {
+        if (!content.trim()) return;
+        setIsSaving(true);
+        try {
+            await onSave?.(content);
             setContent("");
             onClose();
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -35,7 +48,7 @@ export default function NoteModal({
         }
         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
             e.preventDefault();
-            handleSave();
+            void handleSave();
         }
     };
 
@@ -70,7 +83,7 @@ export default function NoteModal({
                             id="note-modal-title"
                             className="text-lg font-semibold text-sand-900 dark:text-sand-100"
                         >
-                            Add Note
+                            {initialContent ? "Edit Note" : "Add Note"}
                         </h2>
                         <p className="text-sm text-sand-600 dark:text-sand-400">
                             Verse {verseRef}
@@ -114,8 +127,8 @@ export default function NoteModal({
                         Cancel
                     </button>
                     <button
-                        onClick={handleSave}
-                        disabled={!content.trim()}
+                        onClick={() => void handleSave()}
+                        disabled={!content.trim() || isSaving}
                         className={cn(
                             "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md",
                             "bg-saffron-600 text-white hover:bg-saffron-700",
@@ -124,7 +137,7 @@ export default function NoteModal({
                         )}
                     >
                         <Save className="h-4 w-4" />
-                        Save Note
+                        {isSaving ? "Saving..." : "Save Note"}
                     </button>
                 </div>
             </div>

@@ -28,12 +28,29 @@ const notoSerifDevanagari = Noto_Serif_Devanagari({
 export const metadata: Metadata = {
     metadataBase: new URL(getSiteUrl()),
     title: {
-        default: "Shastrarthi — Ancient Wisdom, Illuminated",
+        default: "Shastrarthi — Study Sanskrit Texts with AI Explanations",
         template: "%s — Shastrarthi",
     },
     description:
-        "A research platform for ancient Sanskrit texts with AI-powered explanations. Explore the Vedas, Upanishads, Bhagavad Gita, and more.",
-    keywords: ["Sanskrit", "Vedas", "Upanishads", "Bhagavad Gita", "Yoga", "AI", "Ancient Wisdom"],
+        "Read the Vedas, Upanishads, Bhagavad Gita, and Yoga Sutras verse by verse with AI-powered explanations. Compare traditions, take notes, and build your study library. Free.",
+    keywords: [
+        "Sanskrit texts online",
+        "Vedas",
+        "Upanishads",
+        "Bhagavad Gita verse by verse",
+        "Yoga Sutras",
+        "Shastra study",
+        "Sanskrit research",
+        "AI Sanskrit",
+        "verse explanation",
+        "Advaita Vedanta",
+        "Hindu philosophy",
+        "ancient Indian texts",
+        "Sanskrit translation",
+        "Dharma",
+        "Moksha",
+        "spiritual texts",
+    ],
     alternates: {
         canonical: "/",
     },
@@ -41,15 +58,15 @@ export const metadata: Metadata = {
         type: "website",
         url: "/",
         siteName: "Shastrarthi",
-        title: "Shastrarthi — Ancient Wisdom, Illuminated",
+        title: "Shastrarthi — Study Sanskrit Texts with AI Explanations",
         description:
-            "A research platform for ancient Sanskrit texts with AI-powered explanations. Explore the Vedas, Upanishads, Bhagavad Gita, and more.",
+            "Read the Vedas, Upanishads, Bhagavad Gita, and Yoga Sutras verse by verse with AI-powered explanations. Compare traditions and build your study library.",
     },
     twitter: {
         card: "summary_large_image",
-        title: "Shastrarthi — Ancient Wisdom, Illuminated",
+        title: "Shastrarthi — Study Sanskrit Texts with AI Explanations",
         description:
-            "A research platform for ancient Sanskrit texts with AI-powered explanations. Explore the Vedas, Upanishads, Bhagavad Gita, and more.",
+            "Read the Vedas, Upanishads, Bhagavad Gita, and Yoga Sutras verse by verse with AI-powered explanations. Compare traditions and build your study library.",
     },
 };
 

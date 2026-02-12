@@ -142,17 +142,14 @@ export const POST = withAuth(async (request: NextRequest, _context, { supabase, 
                         const contextVerses = verses?.filter((v) => Math.abs(v.order_index - currentVerseIndex) <= 3) || [];
                         const contextString = contextVerses.map((v) => `${v.ref}: ${v.translation_en}`).join("\n");
 
-                        const promptConfig = resolvePrompt(
-                            AGENT_PROMPT_CONFIG_IDS[agent ?? ""] ?? "readerChat",
-                            {
-                                text_name: text.title_en,
-                                verse_ref: verse.ref,
-                                sanskrit: verse.sanskrit || "N/A",
-                                transliteration: verse.transliteration || "N/A",
-                                translation: verse.translation_en,
-                                context_verses: contextString,
-                            }
-                        );
+                        const promptConfig = resolvePrompt(AGENT_PROMPT_CONFIG_IDS[agent ?? ""] ?? "readerChat", {
+                            text_name: text.title_en,
+                            verse_ref: verse.ref,
+                            sanskrit: verse.sanskrit || "N/A",
+                            transliteration: verse.transliteration || "N/A",
+                            translation: verse.translation_en,
+                            context_verses: contextString,
+                        });
 
                         fullResponse = await generateChatResponse(promptConfig, query);
                     } else {

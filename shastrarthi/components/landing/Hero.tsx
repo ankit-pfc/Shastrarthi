@@ -118,7 +118,7 @@ export default function Hero() {
                         </Link>
                         <Link href="/auth/signup">
                             <Button variant="secondary" size="md">
-                                Create Free Account
+                                Start Free Account
                             </Button>
                         </Link>
                     </div>

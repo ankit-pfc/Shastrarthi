@@ -53,7 +53,7 @@ export default function Navbar() {
                                 href="/auth/signup"
                                 className="px-4 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-md transition-colors"
                             >
-                                Sign up
+                                Start Free
                             </Link>
                         </div>
 
@@ -100,7 +100,7 @@ export default function Navbar() {
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className="px-4 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-md transition-colors text-center"
                             >
-                                Sign up
+                                Start Free
                             </Link>
                         </div>
                     </div>
