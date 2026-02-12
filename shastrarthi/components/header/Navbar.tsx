@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, BookOpen } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -21,12 +21,10 @@ export default function Navbar() {
                     {/* Left: Brand */}
                     <Link
                         href="/"
-                        className="flex items-center gap-2 text-gray-900 hover:text-orange-600 transition-colors"
+                        className="flex items-center gap-2.5 text-gray-900 hover:text-orange-600 transition-colors"
                     >
-                        <div className="flex items-center justify-center w-8 h-8 bg-orange-600 rounded-lg shadow-sm">
-                            <BookOpen className="h-5 w-5 text-white" />
-                        </div>
-                        <span className="text-xl font-bold font-serif tracking-tight">Shastrarthi</span>
+                        <span className="font-devanagari text-2xl font-bold text-gray-900 leading-none" aria-hidden="true">श</span>
+                        <span className="text-lg font-bold tracking-tight">Shastrarthi</span>
                     </Link>
 
                     {/* Center: Desktop Navigation */}

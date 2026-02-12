@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
-import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAV_ITEMS, RECENT_CHATS } from "@/lib/config/nav";
 
@@ -33,20 +33,25 @@ export default function Sidebar() {
     return (
         <aside
             className={cn(
-                "h-screen border-r border-gray-200 bg-white/95 backdrop-blur-sm sticky top-0 flex flex-col transition-all duration-300",
-                collapsed ? "w-16" : "w-64"
+                "h-screen border-r border-gray-200 bg-white sticky top-0 flex flex-col transition-all duration-300",
+                collapsed ? "w-[52px]" : "w-60"
             )}
         >
-            <div className="p-3 border-b border-gray-100">
-                <div className="flex items-center justify-between gap-2">
+            {/* Logo + toggle header */}
+            <div className="px-3 py-3.5 border-b border-gray-100">
+                <div className="flex items-center justify-between">
                     <Link href="/" className={cn("flex items-center gap-2", collapsed && "justify-center w-full")}>
-                        <BookOpen className="h-5 w-5 text-orange-600" />
-                        {!collapsed && <span className="text-sm font-semibold text-gray-900">SHASTRARTHI</span>}
+                        <span className="font-devanagari text-xl font-bold text-gray-900 leading-none shrink-0" aria-hidden="true">श</span>
+                        {!collapsed && (
+                            <span className="text-xs font-bold tracking-widest text-gray-900 uppercase">
+                                Shastrarthi
+                            </span>
+                        )}
                     </Link>
                     {!collapsed && (
                         <button
                             onClick={() => setCollapsed(true)}
-                            className="p-1.5 rounded-md hover:bg-gray-100 text-gray-600"
+                            className="p-1 rounded-md hover:bg-gray-100 text-gray-500"
                             aria-label="Close Sidebar"
                             title="Close Sidebar"
                         >
@@ -65,7 +70,7 @@ export default function Sidebar() {
                 {collapsed && (
                     <button
                         onClick={() => setCollapsed(false)}
-                        className="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 py-2"
+                        className="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 py-1.5"
                         aria-label="Open Sidebar"
                         title="Open Sidebar"
                     >
@@ -74,8 +79,9 @@ export default function Sidebar() {
                 )}
             </div>
 
-            <nav className="flex-1 overflow-y-auto px-2 py-3">
-                <div className="space-y-1">
+            {/* Navigation */}
+            <nav className="flex-1 overflow-y-auto px-2 py-2">
+                <div className="space-y-0.5">
                     {APP_NAV_ITEMS.map((item) => {
                         const Icon = item.icon;
                         const active = pathname === item.href || pathname?.startsWith(`${item.href}/`);
@@ -84,30 +90,32 @@ export default function Sidebar() {
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                    "group flex items-center rounded-lg px-2.5 py-2 text-sm transition-colors",
+                                    "group flex items-center rounded-lg px-3 py-1.5 text-sm transition-colors",
                                     active
-                                        ? "bg-orange-50 text-orange-700"
+                                        ? "bg-orange-50 text-orange-700 font-medium"
                                         : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
-                                    collapsed && "justify-center"
+                                    collapsed && "justify-center px-0"
                                 )}
                                 title={collapsed ? item.label : undefined}
                             >
-                                <Icon className="h-4 w-4 shrink-0" />
-                                {!collapsed && <span className="ml-2.5">{item.label}</span>}
+                                <Icon className="h-[18px] w-[18px] shrink-0" />
+                                {!collapsed && <span className="ml-3 truncate">{item.label}</span>}
                             </Link>
                         );
                     })}
                 </div>
 
                 {!collapsed && (
-                    <div className="mt-6">
-                        <p className="px-2.5 mb-2 text-xs text-gray-500 uppercase tracking-wide">Recent Chats</p>
-                        <div className="space-y-1">
+                    <div className="mt-5">
+                        <p className="px-3 mb-1.5 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+                            Recent Chats
+                        </p>
+                        <div className="space-y-0.5">
                             {RECENT_CHATS.map((chat) => (
                                 <Link
                                     key={chat}
                                     href={`/app/chat?q=${encodeURIComponent(chat)}`}
-                                    className="block rounded-lg px-2.5 py-2 text-sm text-gray-600 hover:bg-gray-100 truncate"
+                                    className="block rounded-lg px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 truncate"
                                 >
                                     {chat}
                                 </Link>
@@ -117,14 +125,15 @@ export default function Sidebar() {
                 )}
             </nav>
 
-            <div className={cn("border-t border-gray-100 p-3", collapsed ? "text-center" : "")}>
+            {/* User footer */}
+            <div className={cn("border-t border-gray-100 px-3 py-2.5", collapsed && "flex justify-center")}>
                 {!collapsed ? (
                     <div>
                         <p className="text-sm font-medium text-gray-900">Ankit Mishra</p>
-                        <p className="text-xs text-gray-500 truncate">ankit.m309@gmail.com</p>
+                        <p className="text-xs text-gray-400 truncate">ankit.m309@gmail.com</p>
                     </div>
                 ) : (
-                    <div className="mx-auto h-8 w-8 rounded-full bg-orange-100 text-orange-700 grid place-items-center text-xs font-semibold">
+                    <div className="h-7 w-7 rounded-full bg-orange-100 text-orange-700 grid place-items-center text-[10px] font-semibold">
                         AM
                     </div>
                 )}
