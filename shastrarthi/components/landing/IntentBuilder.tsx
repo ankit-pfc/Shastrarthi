@@ -12,7 +12,7 @@ interface IntentBuilderProps {
     routePrefix?: string;
 }
 
-export default function IntentBuilder({ compact = false, routePrefix = "/discover" }: IntentBuilderProps) {
+export default function IntentBuilder({ compact = false, routePrefix = "/app/discover" }: IntentBuilderProps) {
     const router = useRouter();
     const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
     const [selectedLens, setSelectedLens] = useState<string | null>(null);

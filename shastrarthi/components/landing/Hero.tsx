@@ -2,19 +2,63 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import SearchInput from "@/components/ui/SearchInput";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
+
+type SearchMode = "all" | "texts" | "verses" | "concepts" | "compare" | "practice";
 
 export default function Hero() {
     const router = useRouter();
+    const [mode, setMode] = useState<SearchMode>("all");
 
     const handleSearch = (query: string) => {
         const trimmedQuery = query.trim();
         if (!trimmedQuery) return;
-        router.push(`/app/discover?q=${encodeURIComponent(trimmedQuery)}`);
+        const params = new URLSearchParams({ q: trimmedQuery });
+        if (mode !== "all") params.set("mode", mode);
+        router.push(`/app/discover?${params.toString()}`);
     };
+
+    const modeConfig = useMemo(() => {
+        const configs: Record<SearchMode, { label: string; placeholder: string; helperText: string }> = {
+            all: {
+                label: "All",
+                placeholder: "Search texts, concepts, verses...",
+                helperText: "Try: 'Bhagavad Gita 2.47', 'Karma Yoga', 'Atman'",
+            },
+            texts: {
+                label: "Texts",
+                placeholder: "Search texts...",
+                helperText: "Try: 'Bhagavad Gita', 'Isha Upanishad', 'Yoga Sutras'",
+            },
+            verses: {
+                label: "Verses",
+                placeholder: "Search verses...",
+                helperText: "Try: 'Bhagavad Gita 2.47', 'Yoga Sutra 1.2'",
+            },
+            concepts: {
+                label: "Concepts",
+                placeholder: "Search concepts...",
+                helperText: "Try: 'Dharma', 'Moksha', 'Atman'",
+            },
+            compare: {
+                label: "Compare",
+                placeholder: "Compare across texts...",
+                helperText: "Try: 'Karma in Gita vs Yoga Sutras'",
+            },
+            practice: {
+                label: "Practice",
+                placeholder: "Search practice topics...",
+                helperText: "Try: 'Meditation', 'Non-attachment', 'Breath'",
+            },
+        };
+
+        return configs;
+    }, []);
 
     return (
         <div className="relative overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white via-white to-orange-100/40">
@@ -40,9 +84,27 @@ export default function Hero() {
 
                     {/* Search Bar - 12px gap before helper text */}
                     <div className="mb-10 w-full">
+                        <div className="flex flex-wrap justify-center gap-2 mb-4">
+                            {(Object.keys(modeConfig) as SearchMode[]).map((key) => (
+                                <button
+                                    key={key}
+                                    type="button"
+                                    onClick={() => setMode(key)}
+                                    className={cn(
+                                        "px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors",
+                                        mode === key
+                                            ? "bg-orange-600 text-white border-orange-600"
+                                            : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                                    )}
+                                    aria-pressed={mode === key}
+                                >
+                                    {modeConfig[key].label}
+                                </button>
+                            ))}
+                        </div>
                         <SearchInput
-                            placeholder="Search texts, concepts, verses..."
-                            helperText="Try: 'Bhagavad Gita 2.47', 'Karma Yoga', 'Dharma', 'Atman'"
+                            placeholder={modeConfig[mode].placeholder}
+                            helperText={modeConfig[mode].helperText}
                             onSearch={handleSearch}
                         />
                     </div>

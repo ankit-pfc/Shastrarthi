@@ -1,7 +1,12 @@
 import AuthForm from "@/components/auth/AuthForm";
+import { Suspense } from "react";
 
 export default function SignupPage() {
-    return <AuthForm mode="signup" />;
+    return (
+        <Suspense fallback={null}>
+            <AuthForm mode="signup" />
+        </Suspense>
+    );
 }
 
 export const metadata = {

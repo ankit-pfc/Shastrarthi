@@ -2,6 +2,7 @@ import SearchTextarea from "@/components/discover/SearchTextarea";
 import { fetchTexts } from "@/lib/services/texts";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { INTENT_BUILDER_CONFIG } from "@/lib/config/intents";
 
 const EXAMPLES = [
     "What is the nature of consciousness in Upanishads?",
@@ -12,13 +13,66 @@ const EXAMPLES = [
 export const revalidate = 60;
 
 interface AppDiscoverPageProps {
-    searchParams: { q?: string };
+    searchParams: { q?: string; goal?: string; lens?: string; start?: string; mode?: string };
+}
+
+function buildIntentQuery({
+    goal,
+    lens,
+    start,
+}: {
+    goal?: string;
+    lens?: string;
+    start?: string;
+}): string | null {
+    const selected = [goal, lens, start].some(Boolean);
+    if (!selected) return null;
+
+    const byValue = new Map<string, { label: string; column: string }>();
+    INTENT_BUILDER_CONFIG.forEach((col) => {
+        [...col.items, ...(col.expandedItems ?? [])].forEach((item) => {
+            // Ignore "Show More" synthetic values.
+            if (item.isShowMore) return;
+            byValue.set(item.value, { label: item.label, column: col.title });
+        });
+    });
+
+    const goalLabel = goal ? byValue.get(goal)?.label : undefined;
+    const lensLabel = lens ? byValue.get(lens)?.label : undefined;
+    const startLabel = start ? byValue.get(start)?.label : undefined;
+
+    const parts: string[] = [];
+    if (goalLabel) parts.push(goalLabel);
+    if (lensLabel) parts.push(`in ${lensLabel}`);
+    if (startLabel) parts.push(`starting with ${startLabel}`);
+
+    // If we can’t resolve labels (shouldn’t happen), fall back to raw values.
+    if (parts.length === 0) {
+        const raw = [goal, lens, start].filter(Boolean).join(" ");
+        return raw.length > 0 ? raw : null;
+    }
+
+    return parts.join(" ");
 }
 
 export default async function AppDiscoverPage({ searchParams }: AppDiscoverPageProps) {
     const quickQuery = searchParams?.q?.trim();
     if (quickQuery) {
-        redirect(`/app/discover/${encodeURIComponent(quickQuery)}?depth=deep`);
+        const params = new URLSearchParams({ depth: "deep" });
+        if (searchParams?.mode) params.set("mode", searchParams.mode);
+        redirect(`/app/discover/${encodeURIComponent(quickQuery)}?${params.toString()}`);
+    }
+
+    const intentQuery = buildIntentQuery({
+        goal: searchParams?.goal?.trim(),
+        lens: searchParams?.lens?.trim(),
+        start: searchParams?.start?.trim(),
+    });
+
+    if (intentQuery) {
+        const params = new URLSearchParams({ depth: "deep" });
+        if (searchParams?.mode) params.set("mode", searchParams.mode);
+        redirect(`/app/discover/${encodeURIComponent(intentQuery)}?${params.toString()}`);
     }
 
     const texts = await fetchTexts({ limit: 6 });
