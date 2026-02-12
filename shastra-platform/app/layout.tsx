@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Source_Serif_4, Noto_Serif_Devanagari } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
@@ -29,7 +29,11 @@ export const metadata: Metadata = {
     title: "Shastrarthi - Ancient Wisdom, Illuminated",
     description: "A research platform for ancient Sanskrit texts with AI-powered explanations. Explore Vedas, Upanishads, Bhagavad Gita, and more.",
     keywords: ["Sanskrit", "Vedas", "Upanishads", "Bhagavad Gita", "Yoga", "AI", "Ancient Wisdom"],
-    viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
     themeColor: [
         { media: "(prefers-color-scheme: light)", color: "#FEF7F4" },
         { media: "(prefers-color-scheme: dark)", color: "#1D1B28" },
