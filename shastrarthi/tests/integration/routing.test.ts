@@ -9,7 +9,7 @@ describe("routing helpers", () => {
     it("maps legacy routes to canonical app routes", () => {
         expect(getCanonicalRedirect("/discover")).toBe("/app/discover");
         expect(getCanonicalRedirect("/library")).toBe("/app/library");
-        expect(getCanonicalRedirect("/lists")).toBe("/app/notebooks");
+        expect(getCanonicalRedirect("/lists")).toBe("/app/shastras");
         expect(getCanonicalRedirect("/reader/yoga-sutras")).toBe("/app/reader/yoga-sutras");
     });
 

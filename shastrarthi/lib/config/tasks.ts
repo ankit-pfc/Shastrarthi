@@ -37,7 +37,7 @@ export const POPULAR_TASKS: PopularTask[] = [
         title: "Sanskrit Etymology",
         description: "Dive into root words, derivations, and textual usage across texts.",
         icon: Languages,
-        href: "/app/references",
+        href: "/app/chat?agent=etymology",
     },
     {
         title: "Tradition Overview",

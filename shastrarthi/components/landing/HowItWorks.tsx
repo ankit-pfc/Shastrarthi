@@ -23,7 +23,7 @@ export default function HowItWorks() {
         {
             icon: <Bookmark className="h-6 w-6 text-gray-900" />,
             title: "Build Your Study",
-            description: "Bookmark verses, take notes, and create structured notebooks you can return to anytime.",
+            description: "Bookmark verses, take notes, and create structured ShastraBooks you can return to anytime.",
         },
     ];
 

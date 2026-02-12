@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateChatResponse, generateSynthesisResponse, isConfigured, LearnLMError } from "@/lib/learnlm";
+import { generateChatResponse, generateSynthesisResponse, isConfigured, LearnLMError, resolvePrompt } from "@/lib/learnlm";
 import { withAuth } from "@/lib/api-utils";
 import { buildRateLimitHeaders, checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -9,6 +9,7 @@ const AI_RATE_LIMIT = { windowMs: 60_000, maxRequests: 20 } as const;
 interface ChatRequestBody {
     textId?: string;
     verseRef?: string;
+    agent?: string;
     query: string;
     conversationHistory?: Array<{ role: string; content: string }>;
 }
@@ -44,13 +45,21 @@ type ChatVerseRecord = {
     order_index: number;
 };
 
+const AGENT_PROMPT_CONFIG_IDS: Record<string, string> = {
+    advaita: "agentAdvaita",
+    yoga: "agentYoga",
+    etymology: "agentEtymology",
+    tantra: "agentTantra",
+    sanatan: "agentSanatan",
+};
+
 export const POST = withAuth(async (request: NextRequest, _context, { supabase, user }) => {
     const encoder = new TextEncoder();
 
     try {
         // Validate request body
         const body: ChatRequestBody = await request.json();
-        const { textId, verseRef, query, conversationHistory = [] } = body;
+        const { textId, verseRef, agent, query, conversationHistory = [] } = body;
 
         if (!query) {
             return NextResponse.json(
@@ -133,20 +142,26 @@ export const POST = withAuth(async (request: NextRequest, _context, { supabase, 
                         const contextVerses = verses?.filter((v) => Math.abs(v.order_index - currentVerseIndex) <= 3) || [];
                         const contextString = contextVerses.map((v) => `${v.ref}: ${v.translation_en}`).join("\n");
 
-                        fullResponse = await generateChatResponse(
-                            text.title_en,
-                            verse.ref,
-                            verse.sanskrit,
-                            verse.transliteration,
-                            verse.translation_en,
-                            contextString,
-                            query
+                        const promptConfig = resolvePrompt(
+                            AGENT_PROMPT_CONFIG_IDS[agent ?? ""] ?? "readerChat",
+                            {
+                                text_name: text.title_en,
+                                verse_ref: verse.ref,
+                                sanskrit: verse.sanskrit || "N/A",
+                                transliteration: verse.transliteration || "N/A",
+                                translation: verse.translation_en,
+                                context_verses: contextString,
+                            }
                         );
+
+                        fullResponse = await generateChatResponse(promptConfig, query);
                     } else {
                         const history = sanitizeConversationHistory(conversationHistory);
+                        const promptConfig = resolvePrompt(AGENT_PROMPT_CONFIG_IDS[agent ?? ""] ?? "synthesis");
                         fullResponse = await generateSynthesisResponse(
                             query,
                             "No verse context provided.",
+                            promptConfig,
                             history
                         );
                     }

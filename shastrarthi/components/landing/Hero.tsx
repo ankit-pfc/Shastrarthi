@@ -135,7 +135,7 @@ export default function Hero() {
                         </span>
                         <span className="flex items-center gap-2">
                             <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                            Notes & Notebooks
+                            Notes & ShastraBooks
                         </span>
                     </div>
                 </div>

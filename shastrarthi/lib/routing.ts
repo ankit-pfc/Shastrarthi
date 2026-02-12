@@ -1,7 +1,7 @@
 export const LEGACY_REDIRECTS: Record<string, string> = {
     "/discover": "/app/discover",
     "/library": "/app/library",
-    "/lists": "/app/notebooks",
+    "/lists": "/app/shastras",
 };
 
 export function getCanonicalRedirect(pathname: string): string | null {

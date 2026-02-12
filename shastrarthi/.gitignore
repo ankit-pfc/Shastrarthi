@@ -39,3 +39,6 @@ logs
 
 # local npm cache workaround
 .npm-cache/
+
+# seed-data downloads (run seed-data/download_from_csv.py to regenerate)
+seed-data/downloads/

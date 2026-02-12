@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { usePathname } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Check, ChevronLeft, ChevronRight, Pencil, Trash2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAV_ITEMS } from "@/lib/config/nav";
 import { supabase } from "@/lib/supabase";
@@ -20,9 +20,13 @@ interface SidebarUser {
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
     const [collapsed, setCollapsed] = useState(false);
     const [recentThreads, setRecentThreads] = useState<ThreadSummary[]>([]);
     const [userInfo, setUserInfo] = useState<SidebarUser | null>(null);
+    const [editingThreadId, setEditingThreadId] = useState<string | null>(null);
+    const [editingTitle, setEditingTitle] = useState("");
+    const [threadActionError, setThreadActionError] = useState<string | null>(null);
 
     useEffect(() => {
         const saved = window.localStorage.getItem("shastrarthi.sidebar.collapsed");
@@ -43,30 +47,83 @@ export default function Sidebar() {
         }
     }, [isReader]);
 
-    useEffect(() => {
-        const loadRecentThreads = async () => {
-            try {
-                const response = await fetch("/api/chat/threads");
-                if (!response.ok) {
-                    setRecentThreads([]);
-                    return;
-                }
-
-                const payload = (await response.json()) as {
-                    data?: Array<{ id?: string; title?: string }>;
-                };
-                const threads = (payload.data ?? [])
-                    .filter((item): item is { id: string; title: string } => Boolean(item.id && item.title))
-                    .slice(0, 8);
-                setRecentThreads(threads);
-            } catch (error) {
-                console.error("Failed loading recent threads:", error);
+    const loadRecentThreads = async () => {
+        try {
+            const response = await fetch("/api/chat/threads");
+            if (!response.ok) {
                 setRecentThreads([]);
+                return;
             }
-        };
 
+            const payload = (await response.json()) as {
+                data?: Array<{ id?: string; title?: string }>;
+            };
+            const threads = (payload.data ?? [])
+                .filter((item): item is { id: string; title: string } => Boolean(item.id && item.title))
+                .slice(0, 8);
+            setRecentThreads(threads);
+        } catch (error) {
+            console.error("Failed loading recent threads:", error);
+            setRecentThreads([]);
+        }
+    };
+
+    useEffect(() => {
         void loadRecentThreads();
     }, []);
+
+    const renameThread = async (threadId: string) => {
+        const title = editingTitle.trim();
+        if (!title) {
+            setThreadActionError("Thread title cannot be empty.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/chat/threads/${threadId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title }),
+            });
+            if (!response.ok) {
+                const payload = await response.json().catch(() => ({}));
+                const message = (payload as { error?: string }).error ?? "Failed to rename thread.";
+                setThreadActionError(message);
+                return;
+            }
+            setRecentThreads((prev) => prev.map((thread) => (thread.id === threadId ? { ...thread, title } : thread)));
+            setEditingThreadId(null);
+            setEditingTitle("");
+            setThreadActionError(null);
+        } catch {
+            setThreadActionError("Failed to rename thread.");
+        }
+    };
+
+    const deleteThread = async (threadId: string) => {
+        const shouldDelete = window.confirm("Delete this chat thread? This action cannot be undone.");
+        if (!shouldDelete) return;
+
+        try {
+            const response = await fetch(`/api/chat/threads/${threadId}`, {
+                method: "DELETE",
+            });
+            if (!response.ok) {
+                const payload = await response.json().catch(() => ({}));
+                const message = (payload as { error?: string }).error ?? "Failed to delete thread.";
+                setThreadActionError(message);
+                return;
+            }
+            setRecentThreads((prev) => prev.filter((thread) => thread.id !== threadId));
+            setThreadActionError(null);
+
+            if (pathname?.startsWith(`/app/chat/${threadId}`)) {
+                router.push("/app/chat");
+            }
+        } catch {
+            setThreadActionError("Failed to delete thread.");
+        }
+    };
 
     useEffect(() => {
         const loadUser = async () => {
@@ -199,18 +256,80 @@ export default function Sidebar() {
                         <div className="space-y-0.5">
                             {recentThreads.length > 0 ? (
                                 recentThreads.map((chat) => (
-                                    <Link
-                                        key={chat.id}
-                                        href={`/app/chat/${chat.id}`}
-                                        className="block rounded-lg px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 truncate"
-                                    >
-                                        {chat.title}
-                                    </Link>
+                                    <div key={chat.id} className="group rounded-lg px-2 py-1 hover:bg-gray-100">
+                                        {editingThreadId === chat.id ? (
+                                            <div className="flex items-center gap-1">
+                                                <input
+                                                    value={editingTitle}
+                                                    onChange={(event) => setEditingTitle(event.target.value)}
+                                                    onKeyDown={(event) => {
+                                                        if (event.key === "Enter") {
+                                                            event.preventDefault();
+                                                            void renameThread(chat.id);
+                                                        }
+                                                        if (event.key === "Escape") {
+                                                            setEditingThreadId(null);
+                                                            setEditingTitle("");
+                                                        }
+                                                    }}
+                                                    className="w-full rounded border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700"
+                                                    autoFocus
+                                                />
+                                                <button
+                                                    onClick={() => void renameThread(chat.id)}
+                                                    className="rounded p-1 text-gray-500 hover:bg-gray-200"
+                                                    aria-label="Save title"
+                                                >
+                                                    <Check className="h-3.5 w-3.5" />
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setEditingThreadId(null);
+                                                        setEditingTitle("");
+                                                        setThreadActionError(null);
+                                                    }}
+                                                    className="rounded p-1 text-gray-500 hover:bg-gray-200"
+                                                    aria-label="Cancel rename"
+                                                >
+                                                    <X className="h-3.5 w-3.5" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-1">
+                                                <Link
+                                                    href={`/app/chat/${chat.id}`}
+                                                    className="block flex-1 truncate rounded px-1 py-0.5 text-sm text-gray-500 hover:text-gray-700"
+                                                    title={chat.title}
+                                                >
+                                                    {chat.title}
+                                                </Link>
+                                                <button
+                                                    onClick={() => {
+                                                        setEditingThreadId(chat.id);
+                                                        setEditingTitle(chat.title);
+                                                        setThreadActionError(null);
+                                                    }}
+                                                    className="rounded p-1 text-gray-400 opacity-0 transition group-hover:opacity-100 hover:bg-gray-200 hover:text-gray-600"
+                                                    aria-label="Rename thread"
+                                                >
+                                                    <Pencil className="h-3.5 w-3.5" />
+                                                </button>
+                                                <button
+                                                    onClick={() => void deleteThread(chat.id)}
+                                                    className="rounded p-1 text-gray-400 opacity-0 transition group-hover:opacity-100 hover:bg-gray-200 hover:text-red-600"
+                                                    aria-label="Delete thread"
+                                                >
+                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 ))
                             ) : (
                                 <p className="px-3 py-1.5 text-sm text-gray-400">No recent chats yet.</p>
                             )}
                         </div>
+                        {threadActionError ? <p className="px-3 pt-2 text-xs text-red-600">{threadActionError}</p> : null}
                     </div>
                 )}
             </nav>

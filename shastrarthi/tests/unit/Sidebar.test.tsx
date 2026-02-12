@@ -12,6 +12,9 @@ vi.mock("next/link", () => ({
 
 vi.mock("next/navigation", () => ({
     usePathname: () => "/app",
+    useRouter: () => ({
+        push: vi.fn(),
+    }),
 }));
 
 vi.mock("@/lib/supabase", () => ({

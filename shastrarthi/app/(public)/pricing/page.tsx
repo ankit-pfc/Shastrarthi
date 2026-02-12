@@ -27,7 +27,7 @@ export default function PricingPage() {
                             <ul className="space-y-2 text-sm text-gray-600 mb-5">
                                 <li>Text discovery and verse reading</li>
                                 <li>Basic AI-assisted chat</li>
-                                <li>Personal library and notebooks</li>
+                                <li>Personal library and ShastraBooks</li>
                             </ul>
                             <Link
                                 href="/auth/signup"

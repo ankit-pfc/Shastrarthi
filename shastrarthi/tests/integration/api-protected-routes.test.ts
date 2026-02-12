@@ -98,18 +98,69 @@ describe("protected API routes", () => {
         expect(payload.data.notes[0].content).toBe("note");
     });
 
-    it("returns 404 when notebook is not found", async () => {
+    it("returns 404 when ShastraBook is not found", async () => {
         const single = vi.fn().mockResolvedValue({ data: null, error: { message: "not found" } });
         const select = vi.fn(() => ({ eq: vi.fn(() => ({ eq: vi.fn(() => ({ single })) })) }));
         authContext.supabase = { from: vi.fn(() => ({ select })) };
 
-        const route = await import("@/app/api/notebooks/[id]/route");
-        const response = await route.GET(makeJsonRequest("http://localhost/api/notebooks/abc", "GET"), {
+        const route = await import("@/app/api/shastrabooks/[id]/route");
+        const response = await route.GET(makeJsonRequest("http://localhost/api/shastrabooks/abc", "GET"), {
             params: { id: "abc" },
         });
 
         expect(response.status).toBe(404);
-        await expect(response.json()).resolves.toEqual({ error: "Notebook not found" });
+        await expect(response.json()).resolves.toEqual({ error: "ShastraBook not found" });
+    });
+
+    it("validates append payload for ShastraBook content", async () => {
+        authContext.supabase = { from: vi.fn() };
+        const route = await import("@/app/api/shastrabooks/[id]/append/route");
+        const response = await route.POST(makeJsonRequest("http://localhost/api/shastrabooks/abc/append", "POST", {}), {
+            params: { id: "abc" },
+        });
+
+        expect(response.status).toBe(400);
+        await expect(response.json()).resolves.toEqual({ error: "Missing content to append" });
+    });
+
+    it("appends content to ShastraBook", async () => {
+        const fetchSingle = vi.fn().mockResolvedValue({
+            data: { id: "nb1", content: "Existing content", title: "My Book" },
+            error: null,
+        });
+        const updateSingle = vi.fn().mockResolvedValue({
+            data: { id: "nb1", content: "Existing content\n\n---\n\nNew block", title: "My Book" },
+            error: null,
+        });
+
+        const selectQuery = { eq: vi.fn() as any };
+        selectQuery.eq.mockImplementationOnce(() => ({
+            eq: vi.fn(() => ({ single: fetchSingle })),
+        }));
+
+        const updateQuery = { eq: vi.fn() as any };
+        updateQuery.eq.mockImplementationOnce(() => ({
+            eq: vi.fn(() => ({
+                select: vi.fn(() => ({ single: updateSingle })),
+            })),
+        }));
+
+        authContext.supabase = {
+            from: vi.fn(() => ({
+                select: vi.fn(() => selectQuery),
+                update: vi.fn(() => updateQuery),
+            })),
+        };
+
+        const route = await import("@/app/api/shastrabooks/[id]/append/route");
+        const response = await route.POST(
+            makeJsonRequest("http://localhost/api/shastrabooks/nb1/append", "POST", { content: "New block" }),
+            { params: { id: "nb1" } }
+        );
+        const payload = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(payload.data.content).toContain("New block");
     });
 
     it("creates chat thread message with valid payload", async () => {
@@ -134,5 +185,51 @@ describe("protected API routes", () => {
 
         expect(response.status).toBe(200);
         expect(payload.data.id).toBe("m1");
+    });
+
+    it("renames chat thread with valid payload", async () => {
+        const single = vi.fn().mockResolvedValue({
+            data: { id: "thread-1", title: "Renamed thread", agent: null },
+            error: null,
+        });
+        const updateQuery: any = {};
+        updateQuery.eq = vi.fn(() => updateQuery);
+        updateQuery.select = vi.fn(() => ({ single }));
+
+        authContext.supabase = {
+            from: vi.fn(() => ({
+                update: vi.fn(() => updateQuery),
+            })),
+        };
+
+        const route = await import("@/app/api/chat/threads/[id]/route");
+        const response = await route.PATCH(
+            makeJsonRequest("http://localhost/api/chat/threads/thread-1", "PATCH", { title: "Renamed thread" }),
+            { params: { id: "thread-1" } }
+        );
+        const payload = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(payload.data.title).toBe("Renamed thread");
+    });
+
+    it("deletes chat thread with valid payload", async () => {
+        const eqQuery: any = {};
+        eqQuery.eq = vi.fn(() => eqQuery);
+
+        authContext.supabase = {
+            from: vi.fn(() => ({
+                delete: vi.fn(() => eqQuery),
+            })),
+        };
+
+        const route = await import("@/app/api/chat/threads/[id]/route");
+        const response = await route.DELETE(makeJsonRequest("http://localhost/api/chat/threads/thread-1", "DELETE"), {
+            params: { id: "thread-1" },
+        });
+        const payload = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(payload).toEqual({ ok: true });
     });
 });

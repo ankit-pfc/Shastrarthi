@@ -15,7 +15,7 @@ import { getSiteUrl } from "@/lib/site";
 export const metadata: Metadata = {
     title: "Understand any verse in minutes",
     description:
-        "Read verse-by-verse Sanskrit and English. Ask the AI to explain a verse with context, compare traditions, and organize your study with notes and notebooks.",
+        "Read verse-by-verse Sanskrit and English. Ask the AI to explain a verse with context, compare traditions, and organize your study with notes and ShastraBooks.",
     alternates: { canonical: "/" },
     openGraph: {
         title: "Understand any verse in minutes",

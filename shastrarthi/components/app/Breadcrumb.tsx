@@ -10,12 +10,12 @@ const LABELS: Record<string, string> = {
     reader: "Chat with Text",
     chat: "AI Chat",
     library: "My Library",
-    notebooks: "Study Notebooks",
+    notebooks: "Study Shastras",
+    shastras: "Study Shastras",
     topics: "Explore Topics",
     gallery: "Guru Gallery",
     writer: "Shastra Writer",
     simplifier: "Simplifier",
-    references: "Reference Generator",
     extract: "Extract Insights",
 };
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateSynthesisResponse, isConfigured, LearnLMError } from "@/lib/learnlm";
+import { generateSynthesisResponse, isConfigured, LearnLMError, resolvePrompt } from "@/lib/learnlm";
 import { withAuth } from "@/lib/api-utils";
 import { buildRateLimitHeaders, checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -58,7 +58,8 @@ export const POST = withAuth(async (request: NextRequest, _context, { user }) =>
         const stream = new ReadableStream({
             async start(controller) {
                 try {
-                    const fullResponse = await generateSynthesisResponse(query, textSummaries);
+                    const promptConfig = resolvePrompt("synthesis");
+                    const fullResponse = await generateSynthesisResponse(query, textSummaries, promptConfig);
                     for (const chunk of fullResponse) {
                         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: chunk })}\n\n`));
                         await new Promise((resolve) => setTimeout(resolve, 8));

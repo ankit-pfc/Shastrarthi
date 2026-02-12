@@ -272,6 +272,47 @@ export interface Database {
                     updated_at?: string;
                 };
             };
+            public_pages: {
+                Row: {
+                    id: string;
+                    slug: string;
+                    title: string;
+                    content: string;
+                    source_query: string | null;
+                    language: string;
+                    mode: "simplify" | "translate";
+                    meta_description: string | null;
+                    keywords: string[];
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    slug: string;
+                    title: string;
+                    content: string;
+                    source_query?: string | null;
+                    language?: string;
+                    mode?: "simplify" | "translate";
+                    meta_description?: string | null;
+                    keywords?: string[];
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    slug?: string;
+                    title?: string;
+                    content?: string;
+                    source_query?: string | null;
+                    language?: string;
+                    mode?: "simplify" | "translate";
+                    meta_description?: string | null;
+                    keywords?: string[];
+                    created_at?: string;
+                    updated_at?: string;
+                };
+            };
             reading_progress: {
                 Row: {
                     user_id: string;
@@ -314,5 +355,7 @@ export type Note = Tables["notes"]["Row"];
 export type UserText = Tables["user_texts"]["Row"];
 export type ChatThread = Tables["chat_threads"]["Row"];
 export type ChatMessage = Tables["chat_messages"]["Row"];
-export type Notebook = Tables["notebooks"]["Row"];
+export type ShastraBook = Tables["notebooks"]["Row"];
+export type Notebook = ShastraBook;
+export type PublicPage = Tables["public_pages"]["Row"];
 export type ReadingProgress = Tables["reading_progress"]["Row"];

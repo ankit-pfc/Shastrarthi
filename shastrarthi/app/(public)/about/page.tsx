@@ -35,7 +35,7 @@ export default function AboutPage() {
                         <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
                             <h2 className="text-lg font-semibold text-gray-900 mb-2">Research workflow</h2>
                             <p className="text-sm text-gray-600">
-                                Save notes, collect references, and organize learning into notebooks.
+                                Save notes and organize learning into ShastraBooks.
                             </p>
                         </div>
                     </div>

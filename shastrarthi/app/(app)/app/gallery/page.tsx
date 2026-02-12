@@ -13,11 +13,15 @@ const AGENTS = [
         desc: "Deep root analysis, lexical families, and contextual usage.",
     },
     {
-        name: "Comparative Traditions",
-        key: "comparative",
-        desc: "Cross-tradition synthesis between Vedanta, Yoga, and Tantra.",
+        name: "Tantra Guide",
+        key: "tantra",
+        desc: "Specialized in Tantra Shastra - Shakta, Shaiva, and Kaula traditions, mantra science, and esoteric practices.",
     },
-    { name: "Practice Advisor", key: "practice", desc: "Bridges textual knowledge with practical spiritual routines." },
+    {
+        name: "Sanatan Guide",
+        key: "sanatan",
+        desc: "All-encompassing guide across the full breadth of Sanatan Dharma - Vedas, Smritis, Puranas, Darshanas, and beyond.",
+    },
 ];
 
 export default function GalleryPage() {

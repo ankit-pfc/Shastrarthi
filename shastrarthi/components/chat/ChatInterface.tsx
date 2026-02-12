@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { BookmarkPlus, Download, MoreHorizontal, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import MessageBubble from "./MessageBubble";
@@ -20,6 +20,7 @@ export default function ChatInterface({
     const router = useRouter();
     const [threadId, setThreadId] = useState<string | null>(initialThreadId ?? null);
     const [isLoading, setIsLoading] = useState(false);
+    const [title, setTitle] = useState(initialTitle);
     const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([
         {
             role: "assistant",
@@ -28,8 +29,6 @@ export default function ChatInterface({
         },
     ]);
 
-    const title = useMemo(() => initialTitle, [initialTitle]);
-
     useEffect(() => {
         if (!initialThreadId) return;
         const loadThread = async () => {
@@ -37,6 +36,10 @@ export default function ChatInterface({
                 const response = await fetch(`/api/chat/threads/${initialThreadId}`);
                 if (!response.ok) return;
                 const payload = await response.json();
+                const threadTitle = payload.data?.thread?.title as string | undefined;
+                if (threadTitle?.trim()) {
+                    setTitle(threadTitle);
+                }
                 const loadedMessages = (payload.data?.messages ?? []).map((msg: any) => ({
                     role: msg.role,
                     content: msg.content,
@@ -67,7 +70,11 @@ export default function ChatInterface({
         }
         const payload = await response.json();
         const createdThreadId = payload.data.id as string;
+        const createdTitle = payload.data.title as string | undefined;
         setThreadId(createdThreadId);
+        if (createdTitle?.trim()) {
+            setTitle(createdTitle);
+        }
         router.replace(`/app/chat/${createdThreadId}`);
         return createdThreadId;
     };
@@ -95,6 +102,7 @@ export default function ChatInterface({
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
+                        agent,
                         query: text,
                         conversationHistory: messages.slice(-8),
                     }),
@@ -163,14 +171,40 @@ export default function ChatInterface({
         void send();
     };
 
+    const downloadChatAsMarkdown = () => {
+        const lines = [`# ${title}`, "", `Thread ID: ${threadId ?? "not-saved-yet"}`, "", "---", ""];
+        for (const message of messages) {
+            const label = message.role === "user" ? "User" : "Assistant";
+            lines.push(`## ${label}`);
+            lines.push("");
+            lines.push(message.content || "_(empty)_");
+            lines.push("");
+        }
+        const markdown = lines.join("\n");
+        const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+        const blobUrl = URL.createObjectURL(blob);
+        const safeTitle = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "chat-thread";
+        const anchor = document.createElement("a");
+        anchor.href = blobUrl;
+        anchor.download = `${safeTitle}.md`;
+        anchor.click();
+        URL.revokeObjectURL(blobUrl);
+    };
+
     return (
         <div className="max-w-4xl mx-auto h-[calc(100vh-104px)] flex flex-col">
             <div className="mb-4 flex items-center justify-between">
                 <h1 className="text-lg font-medium text-gray-900">{title}</h1>
                 <div className="flex items-center gap-2 text-gray-500">
-                    <button className="p-2 rounded-md hover:bg-gray-100"><Share2 className="h-4 w-4" /></button>
-                    <button className="p-2 rounded-md hover:bg-gray-100"><BookmarkPlus className="h-4 w-4" /></button>
-                    <button className="p-2 rounded-md hover:bg-gray-100"><Download className="h-4 w-4" /></button>
+                    <button className="p-2 rounded-md hover:bg-gray-100" title="Share (coming soon)">
+                        <Share2 className="h-4 w-4" />
+                    </button>
+                    <button className="p-2 rounded-md hover:bg-gray-100" title="Bookmark (coming soon)">
+                        <BookmarkPlus className="h-4 w-4" />
+                    </button>
+                    <button onClick={downloadChatAsMarkdown} className="p-2 rounded-md hover:bg-gray-100" title="Download">
+                        <Download className="h-4 w-4" />
+                    </button>
                     <button className="p-2 rounded-md hover:bg-gray-100"><MoreHorizontal className="h-4 w-4" /></button>
                 </div>
             </div>
