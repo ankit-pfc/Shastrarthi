@@ -8,12 +8,12 @@ export default function HowItWorks() {
         {
             icon: <BookOpen className="h-6 w-6 text-gray-900" />,
             title: "Choose a Text",
-            description: "Browse curated Shastras from Vedas to Tantra with verse-by-verse Sanskrit and English context.",
+            description: "Browse the Vedas, Upanishads, Gita, Yoga Sutras, and more — with verse-by-verse Sanskrit and English.",
         },
         {
             icon: <Scroll className="h-6 w-6 text-gray-900" />,
-            title: "Ask Anything",
-            description: "Ask verse-level or cross-text questions and get context-aware AI responses with citations.",
+            title: "Read and Ask",
+            description: "Pick any verse and ask the AI for meaning, context, and related passages — with citations.",
         },
         {
             icon: <Sparkles className="h-6 w-6 text-gray-900" />,
@@ -22,8 +22,8 @@ export default function HowItWorks() {
         },
         {
             icon: <Bookmark className="h-6 w-6 text-gray-900" />,
-            title: "Build Your Research",
-            description: "Create structured notebooks, reading paths, and export-ready research from your ongoing study.",
+            title: "Build Your Study",
+            description: "Bookmark verses, take notes, and create structured notebooks you can return to anytime.",
         },
     ];
 
@@ -35,7 +35,7 @@ export default function HowItWorks() {
                         How It Works
                     </h2>
                     <p className="text-sm text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                        A practical workflow for deep civilizational study, comparative interpretation, and structured output.
+                        A simple workflow for deep study: read, ask, compare, and organize your research as you go.
                     </p>
                 </div>
 

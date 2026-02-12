@@ -3,6 +3,7 @@ import { Inter, Source_Serif_4, Noto_Serif_Devanagari } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import ClientLayout from "@/components/ClientLayout";
+import { getSiteUrl } from "@/lib/site";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -25,9 +26,31 @@ const notoSerifDevanagari = Noto_Serif_Devanagari({
 });
 
 export const metadata: Metadata = {
-    title: "Shastrarthi - Ancient Wisdom, Illuminated",
-    description: "A research platform for ancient Sanskrit texts with AI-powered explanations. Explore Vedas, Upanishads, Bhagavad Gita, and more.",
+    metadataBase: new URL(getSiteUrl()),
+    title: {
+        default: "Shastrarthi — Ancient Wisdom, Illuminated",
+        template: "%s — Shastrarthi",
+    },
+    description:
+        "A research platform for ancient Sanskrit texts with AI-powered explanations. Explore the Vedas, Upanishads, Bhagavad Gita, and more.",
     keywords: ["Sanskrit", "Vedas", "Upanishads", "Bhagavad Gita", "Yoga", "AI", "Ancient Wisdom"],
+    alternates: {
+        canonical: "/",
+    },
+    openGraph: {
+        type: "website",
+        url: "/",
+        siteName: "Shastrarthi",
+        title: "Shastrarthi — Ancient Wisdom, Illuminated",
+        description:
+            "A research platform for ancient Sanskrit texts with AI-powered explanations. Explore the Vedas, Upanishads, Bhagavad Gita, and more.",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Shastrarthi — Ancient Wisdom, Illuminated",
+        description:
+            "A research platform for ancient Sanskrit texts with AI-powered explanations. Explore the Vedas, Upanishads, Bhagavad Gita, and more.",
+    },
 };
 
 export const viewport: Viewport = {

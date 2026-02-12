@@ -1,3 +1,12 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Traditions",
+    description:
+        "Explore Vedanta, Yoga, Tantra, Bhakti, and allied lineages with structured context and comparative study.",
+    alternates: { canonical: "/traditions" },
+};
+
 export default function TraditionsPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-white via-orange-50/30 to-orange-100/50">

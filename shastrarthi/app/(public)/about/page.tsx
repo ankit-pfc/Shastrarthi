@@ -1,3 +1,12 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "About",
+    description:
+        "Learn about Shastrarthi’s mission: making ancient Sanskrit texts research-grade, accessible, and deeply contextual.",
+    alternates: { canonical: "/about" },
+};
+
 export default function AboutPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-white via-orange-50/30 to-orange-100/50">

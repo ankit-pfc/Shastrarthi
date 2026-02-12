@@ -23,26 +23,26 @@ export default function Hero() {
                     {/* Top Badge - 24px gap before heading */}
                     <div className="mb-8">
                         <Badge icon={<Sparkles className="h-4 w-4 text-orange-500" />} variant="default">
-                            AI-Powered Ancient Wisdom
+                            AI-Powered Sanskrit Research
                         </Badge>
                     </div>
 
                     {/* Heading - 16px gap before subheading */}
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold font-serif text-gray-900 mb-4 tracking-tight">
-                        Ancient Wisdom, Illuminated
+                        Understand Any Verse in Minutes
                     </h1>
 
                     {/* Subheading - 40px gap before search bar */}
                     <p className="text-base md:text-lg text-gray-600 max-w-3xl leading-relaxed mb-8">
-                        Explore the timeless wisdom of the Vedas, Upanishads, and Yoga with AI-powered explanations.
-                        Ask questions, take notes, and build your personal library.
+                        Read verse-by-verse Sanskrit and English. Ask the AI to explain a verse with context, compare
+                        interpretations across traditions, and keep your study organized.
                     </p>
 
                     {/* Search Bar - 12px gap before helper text */}
                     <div className="mb-10 w-full">
                         <SearchInput
                             placeholder="Search texts, concepts, verses..."
-                            helperText="Try: 'Bhagavad Gita', 'Karma Yoga', 'Dharma', 'Meditation'"
+                            helperText="Try: 'Bhagavad Gita 2.47', 'Karma Yoga', 'Dharma', 'Atman'"
                             onSearch={handleSearch}
                         />
                     </div>
@@ -51,12 +51,12 @@ export default function Hero() {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
                         <Link href="/discover">
                             <Button variant="primary" size="md">
-                                Browse Texts
+                                Browse Sacred Texts
                             </Button>
                         </Link>
                         <Link href="/auth/signup">
                             <Button variant="secondary" size="md">
-                                Get Started Free
+                                Create Free Account
                             </Button>
                         </Link>
                     </div>
@@ -69,11 +69,11 @@ export default function Hero() {
                         </span>
                         <span className="flex items-center gap-2">
                             <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                            AI Explanations
+                            Verse-level Explanations
                         </span>
                         <span className="flex items-center gap-2">
                             <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                            Save & Organize
+                            Notes & Notebooks
                         </span>
                     </div>
                 </div>

@@ -1,4 +1,12 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Pricing",
+    description:
+        "Simple and transparent pricing for Shastrarthi. Start exploring sacred texts and AI-powered explanations for free.",
+    alternates: { canonical: "/pricing" },
+};
 
 export default function PricingPage() {
     return (

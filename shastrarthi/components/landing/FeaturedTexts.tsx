@@ -46,10 +46,10 @@ export default function FeaturedTexts({ texts }: FeaturedTextsProps) {
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h2 className="text-2xl font-semibold text-gray-900 mb-1">
-                            Featured Texts
+                            Start with These Texts
                         </h2>
                         <p className="text-sm text-gray-600 leading-relaxed">
-                            Start your journey with these popular sacred texts
+                            The most-studied Shastras, ready for verse-level research.
                         </p>
                     </div>
                     <Link
