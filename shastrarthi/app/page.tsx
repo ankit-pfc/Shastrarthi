@@ -10,22 +10,22 @@ import JsonLd from "@/components/seo/JsonLd";
 import { getSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
-    title: "Understand any verse in minutes",
+    title: "Shastrarthi — Study Ancient Texts with AI from Great Masters",
     description:
-        "Read verse-by-verse Sanskrit and English. Ask the AI to explain a verse with context, compare traditions, and organize your study with notes and ShastraBooks.",
+        "Study Shastras, texts of the ancient civilization with AI from the great masters. Learn Vedas, Upanishads, Bhagavad Gita, and Yoga Sutras with explanations from Shri Krishna, Shankara, Ramanuja, and more.",
     alternates: { canonical: "/" },
     openGraph: {
-        title: "Understand any verse in minutes",
+        title: "Shastrarthi — Study Ancient Texts with AI from Great Masters",
         description:
-            "Read verse-by-verse Sanskrit and English. Ask the AI to explain a verse with context, compare traditions, and organize your study.",
+            "Study Shastras, texts of the ancient civilization with AI from the great masters. Learn Vedas, Upanishads, Bhagavad Gita, and Yoga Sutras with explanations from Shri Krishna, Shankara, Ramanuja, and more.",
         url: "/",
-        images: [{ url: "/opengraph-image" }],
+        images: [{ url: "/icon.png", width: 512, height: 512, alt: "Shastrarthi Logo" }],
     },
     twitter: {
-        title: "Understand any verse in minutes",
+        title: "Shastrarthi — Study Ancient Texts with AI from Great Masters",
         description:
-            "Read verse-by-verse Sanskrit and English. Ask the AI to explain a verse with context, compare traditions, and organize your study.",
-        images: ["/twitter-image"],
+            "Study Shastras, texts of the ancient civilization with AI from the great masters. Learn Vedas, Upanishads, Bhagavad Gita, and Yoga Sutras with explanations from Shri Krishna, Shankara, Ramanuja, and more.",
+        images: ["/icon.png"],
     },
 };
 

@@ -66,7 +66,7 @@ export default async function ShastraDiscoveryPage() {
                                     {text.title_en}
                                 </p>
                                 <p className="text-xs text-gray-500 truncate">
-                                    {text.author || "Unknown Author"}
+                                    {text.verse_count} verse{text.verse_count !== 1 ? "s" : ""}
                                 </p>
                             </div>
                         </div>

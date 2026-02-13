@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site";
 import { createClient } from "@supabase/supabase-js";
+import { GURU_PERSONAS } from "@/lib/config/prompts";
+import { TRADITIONS } from "@/lib/config/traditions";
 
 function createPublicSupabase() {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -13,6 +15,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const siteUrl = getSiteUrl();
     const lastModified = new Date();
     const supabase = createPublicSupabase();
+
+    const masterPages: MetadataRoute.Sitemap = Object.values(GURU_PERSONAS).map((persona) => ({
+        url: `${siteUrl}/masters/${persona.key}`,
+        lastModified,
+        changeFrequency: "weekly",
+        priority: 0.9,
+    }));
+
+    const traditionPages: MetadataRoute.Sitemap = TRADITIONS.map((tradition) => ({
+        url: `${siteUrl}/traditions/${tradition.slug}`,
+        lastModified,
+        changeFrequency: "weekly",
+        priority: 0.9,
+    }));
 
     const staticPages: MetadataRoute.Sitemap = [
         {
@@ -152,6 +168,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [
         ...staticPages,
+        ...masterPages,
+        ...traditionPages,
         ...textPages,
         ...dynamicExplorePages,
         ...dynamicTopicsPages,

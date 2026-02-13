@@ -73,7 +73,7 @@ export default function Hero() {
 
                     {/* Heading - 16px gap before subheading */}
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold font-serif text-gray-900 mb-4 tracking-tight">
-                        Understand Any Verse in Minutes
+                        Study Ancient Texts with AI from Great Masters
                     </h1>
 
                     {/* Subheading - 40px gap before search bar */}
