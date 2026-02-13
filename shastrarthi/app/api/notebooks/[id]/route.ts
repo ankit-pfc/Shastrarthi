@@ -12,7 +12,7 @@ export const GET = withAuth(async (_request: NextRequest, { params }: RouteConte
     try {
         const { data, error } = await (supabase as any)
             .from("notebooks")
-            .select("id, title, content, created_at, updated_at")
+            .select("id, title, content, created_at, updated_at, thread_id")
             .eq("id", params.id)
             .eq("user_id", user.id)
             .single();
@@ -33,6 +33,7 @@ export const PUT = withAuth(async (request: NextRequest, { params }: RouteContex
         const body = await request.json().catch(() => ({}));
         const title = (body?.title as string | undefined)?.trim();
         const content = body?.content as string | undefined;
+        const threadId = body?.thread_id as string | undefined;
 
         if (typeof title === "string" && title.length > MAX_NOTEBOOK_TITLE_LENGTH) {
             return NextResponse.json(
@@ -50,13 +51,14 @@ export const PUT = withAuth(async (request: NextRequest, { params }: RouteContex
         const updatePayload: Record<string, unknown> = {};
         if (typeof title === "string") updatePayload.title = title;
         if (typeof content === "string") updatePayload.content = content;
+        if (typeof threadId !== "undefined") updatePayload.thread_id = threadId;
 
         const { data, error } = await (supabase as any)
             .from("notebooks")
             .update(updatePayload)
             .eq("id", params.id)
             .eq("user_id", user.id)
-            .select("id, title, content, created_at, updated_at")
+            .select("id, title, content, created_at, updated_at, thread_id")
             .single();
 
         if (error) {

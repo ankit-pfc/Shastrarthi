@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Check, ChevronLeft, ChevronRight, Pencil, Trash2, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Pencil, Trash2, X, LogOut, Settings, HelpCircle, User, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_NAV_ITEMS } from "@/lib/config/nav";
 import { supabase } from "@/lib/supabase";
@@ -27,6 +27,7 @@ export default function Sidebar() {
     const [editingThreadId, setEditingThreadId] = useState<string | null>(null);
     const [editingTitle, setEditingTitle] = useState("");
     const [threadActionError, setThreadActionError] = useState<string | null>(null);
+    const [showAccountMenu, setShowAccountMenu] = useState(false);
 
     useEffect(() => {
         const saved = window.localStorage.getItem("shastrarthi.sidebar.collapsed");
@@ -251,7 +252,7 @@ export default function Sidebar() {
                 {!collapsed && (
                     <div className="mt-5">
                         <p className="px-3 mb-1.5 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
-                            Recent Chats
+                            Chat History
                         </p>
                         <div className="space-y-0.5">
                             {recentThreads.length > 0 ? (
@@ -335,16 +336,69 @@ export default function Sidebar() {
             </nav>
 
             {/* User footer */}
-            <div className={cn("border-t border-gray-100 px-3 py-2.5", collapsed && "flex justify-center")}>
-                {!collapsed ? (
-                    <div>
-                        <p className="text-sm font-medium text-gray-900">{userInfo?.name ?? "Guest"}</p>
-                        <p className="text-xs text-gray-400 truncate">{userInfo?.email ?? "Not signed in"}</p>
-                    </div>
-                ) : (
-                    <div className="h-7 w-7 rounded-full bg-orange-100 text-orange-700 grid place-items-center text-[10px] font-semibold">
+            <div className="border-t border-gray-100 p-2 relative">
+                <button
+                    onClick={() => setShowAccountMenu(!showAccountMenu)}
+                    className={cn(
+                        "w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors text-left",
+                        collapsed && "justify-center px-0"
+                    )}
+                >
+                    <div className="h-8 w-8 rounded-full bg-orange-100 text-orange-700 grid place-items-center text-xs font-semibold shrink-0">
                         {userInitials || "U"}
                     </div>
+                    {!collapsed && (
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{userInfo?.name ?? "Guest"}</p>
+                            <p className="text-xs text-gray-500 truncate">{userInfo?.email ?? "Not signed in"}</p>
+                        </div>
+                    )}
+                </button>
+
+                {/* Account Menu Popover */}
+                {showAccountMenu && !collapsed && (
+                    <>
+                        <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setShowAccountMenu(false)}
+                        />
+                        <div className="absolute bottom-full left-2 w-60 bg-white rounded-xl shadow-xl border border-gray-200 mb-2 p-1 z-50 overflow-hidden">
+                            <div className="px-3 py-2 border-b border-gray-100 mb-1">
+                                <p className="text-sm font-medium text-gray-900 truncate">{userInfo?.name ?? "Guest"}</p>
+                                <p className="text-xs text-gray-500 truncate">{userInfo?.email ?? "@guest"}</p>
+                            </div>
+
+                            <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                                <Sparkles className="h-4 w-4" />
+                                <span>Upgrade plan</span>
+                            </button>
+                            <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                                <User className="h-4 w-4" />
+                                <span>My Account</span>
+                            </button>
+                            <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                                <Settings className="h-4 w-4" />
+                                <span>Settings</span>
+                            </button>
+
+                            <div className="my-1 border-t border-gray-100" />
+
+                            <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                                <HelpCircle className="h-4 w-4" />
+                                <span>Help</span>
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    await supabase.auth.signOut();
+                                    router.push("/auth/login");
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                                <LogOut className="h-4 w-4" />
+                                <span>Log out</span>
+                            </button>
+                        </div>
+                    </>
                 )}
             </div>
         </aside>
