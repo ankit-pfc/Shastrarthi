@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Inter, Source_Serif_4, Noto_Serif_Devanagari } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
@@ -116,6 +117,7 @@ export default function RootLayout({
                         </main>
                     </ClientLayout>
                 </AuthProvider>
+                <GoogleAnalytics gaId="G-1Y68V2X8F0" />
             </body>
         </html>
     );

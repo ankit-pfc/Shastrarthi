@@ -8,31 +8,31 @@ export const TRADITIONS: Tradition[] = [
     {
         slug: "vedanta",
         name: "Vedanta",
-        description: "The 'Conclusion of the Vedas', dealing with the ultimate nature of Reality (Brahman) and the Self (Atman). It spans the strict non-dualism of Advaita to the devotion-centered dualism of Dvaita, all grounded in the Prasthana Trayi (Upanishads, Gita, Brahma Sutras).",
+        description: "The ultimate inquiry into Reality (Brahman). From the forest-wisdom of the Upanishads to the rigorous logic of the Brahma Sutras, Vedanta asks the single most important question: 'Who am I?'",
     },
     {
         slug: "yoga",
         name: "Yoga",
-        description: "A systematic psychology and practice for stilling the fluctuations of the mind (Chitta Vritti Nirodha). Rooted in Patanjali's Sutras, it outlines the Eight Limbs (Ashtanga) leading to Samadhi, or integration.",
+        description: "The science of inner silence. Far more than physical postures, Yoga provides a precise map to still the fluctuations of the mind (Chitta Vritti Nirodha) and rest in your true nature.",
     },
     {
         slug: "tantra",
         name: "Tantra",
-        description: "A path accepting the manifest world as a play of divine Consciousness and Energy (Shiva-Shakti). Utilizing ritual, mantra, and the body itself, Tantra aims for both liberation (Moksha) and enjoyment (Bhoga) through recognition of the divine in all things.",
+        description: "The path of radical acceptance. Tantra sees the world not as an illusion to be escaped, but as the divine play (Lila) of Consciousness to be embraced, turning every experience into a gateway to the Sacred.",
     },
     {
         slug: "bhakti",
         name: "Bhakti",
-        description: "The path of loving devotion and surrender (Prapatti) to a personal Divinity. From the passionate poetry of the Alvars and Nayanars to the theological systems of the Vaishnava Acharyas, it emphasizes relationship over abstract knowledge.",
+        description: "The path of the heart. Bhakti transforms raw emotion into divine love (Prema). Whether through song, service, or surrender, it dissolves the ego in the sweetness of the Beloved.",
     },
     {
         slug: "nyaya",
         name: "Nyaya",
-        description: "The school of Logic and Epistemology. Nyaya provides the rigorous tools for critical thinking and debate used by all other Indian systems. It focuses on the Pramanas—the valid means of acquiring correct knowledge.",
+        description: "The sword of logic. Nyaya provides the intellectual tools to distinguish truth from falsehood, offering the rigorous epistemological foundation upon which all other Indian philosophies stand.",
     },
     {
         slug: "samkhya",
         name: "Samkhya",
-        description: "The dualist philosophy enumerating the cosmic principles. It distinguishes between Pure Consciousness (Purusha) and Material Nature (Prakriti), forming the metaphysical foundation for Yoga and Ayurveda.",
+        description: "The enumeration of reality. Samkhya dissects existence into Spirit (Purusha) and Nature (Prakriti), offering the metaphysical blueprint for understanding the machinery of your own experience.",
     },
 ];

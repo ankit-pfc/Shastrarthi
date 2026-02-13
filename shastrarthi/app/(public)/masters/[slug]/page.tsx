@@ -40,47 +40,51 @@ export default function MasterPage({ params }: Props) {
     // Extract a bio from the masterPrompt for display, or better yet, we should add a 'bio' field to the config.
     // For now, we'll use a generic bio derived from the system prompt to avoid unauthorized content exposure.
     // Actually, looking at the config, 'masterPrompt' is safe to show as a description of the persona.
-    const description = persona.masterPrompt.split('\n')[0].replace('You are ', '');
+    const description = persona.bio;
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-white via-orange-50/30 to-orange-100/50 py-20 px-4">
+        <main className="min-h-screen bg-parchment-50 py-20 px-4">
             <div className="container mx-auto max-w-4xl">
-                <Link href="/app/discover" className="text-sm text-orange-600 hover:text-orange-700 mb-8 inline-block">
+                <Link href="/app/discover" className="text-sm font-medium text-stone-500 hover:text-saffron-700 mb-8 inline-flex items-center transition-colors">
                     ← Back to Discovery
                 </Link>
 
-                <div className="bg-white rounded-2xl shadow-sm border border-orange-100 p-8 md:p-12 text-center">
-                    <div className="text-6xl mb-6">{persona.icon}</div>
-                    <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
+                <div className="bg-white rounded-2xl shadow-sm border border-stone-200 p-8 md:p-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="text-7xl mb-6">{persona.icon}</div>
+                    <h1 className="text-4xl md:text-5xl font-serif font-bold text-ink-900 mb-4">
                         {persona.name}
                     </h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-                        {description}
+                    <p className="text-xl text-stone-600 max-w-2xl mx-auto mb-10 leading-relaxed font-serif italic">
+                        &quot;{description}&quot;
                     </p>
 
                     <div className="flex justify-center">
                         <Link
                             href={`/app/chat?persona=${persona.key}`}
-                            className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-8 py-4 rounded-full text-lg font-medium transition-colors shadow-lg hover:shadow-orange-200"
+                            className="inline-flex items-center gap-2 bg-saffron-600 hover:bg-saffron-700 text-white px-8 py-4 rounded-lg text-lg font-bold transition-all shadow-lg hover:shadow-saffron-200/50 transform hover:-translate-y-0.5"
                         >
                             <LucideMessageCircle className="w-5 h-5" />
-                            Start Dialogue
+                            Seek Guidance
                         </Link>
                     </div>
                 </div>
 
-                <div className="mt-12 text-center">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">About this Persona</h2>
-                    <div className="bg-white/80 rounded-xl p-6 border border-gray-100 max-w-2xl mx-auto text-left">
-                        <p className="text-gray-700 mb-4">
-                            This interface simulates a dialogue with <strong>{persona.name}</strong> based on their known works and philosophy. It is designed to help you explore their teachings interactively.
+                <div className="mt-16 text-center">
+                    <h2 className="text-2xl font-serif font-bold text-ink-900 mb-6">The Teaching Style</h2>
+                    <div className="bg-white rounded-xl p-8 border border-stone-100 max-w-2xl mx-auto text-left shadow-sm">
+                        <p className="text-lg text-stone-700 mb-6 leading-relaxed">
+                            When you speak with <strong>{persona.name}</strong>, you are engaging with a lineage-specific perspective. The answers are grounded in their commentaries (Bhashyas) and the mood (Bhava) of their tradition.
                         </p>
-                        <p className="text-gray-600 text-sm">
-                            System Directive: <br />
-                            <code className="bg-gray-50 px-1 py-0.5 rounded text-gray-800">
-                                {persona.masterPrompt.split('\n').slice(0, 3).join(' ')}...
-                            </code>
-                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-4 bg-stone-50 rounded-lg">
+                                <h3 className="font-bold text-stone-900 mb-1">Focus</h3>
+                                <p className="text-sm text-stone-600">Authentic scriptural interpretation</p>
+                            </div>
+                            <div className="p-4 bg-stone-50 rounded-lg">
+                                <h3 className="font-bold text-stone-900 mb-1">Boundaries</h3>
+                                <p className="text-sm text-stone-600">Won&apos;t fabricate verses or mix traditions</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
