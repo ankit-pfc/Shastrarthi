@@ -1,8 +1,9 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
 /**
- * Supabase client for client-side operations
- * Uses the anon key which is safe for public use with RLS policies
+ * Supabase client for client-side operations.
+ * Uses createBrowserClient from @supabase/ssr so sessions are stored in cookies,
+ * enabling middleware and server components to read auth state.
  */
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -13,13 +14,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
     );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-    },
-});
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
 
 /**
  * Types for our database tables

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { Mail, Lock, User, Loader2, AlertCircle } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import Button from "@/components/ui/Button";
 
 interface AuthFormProps {
     mode: "login" | "signup";
@@ -18,7 +19,6 @@ interface ValidationErrors {
 
 export default function AuthForm({ mode }: AuthFormProps) {
     const { signIn, signUp, signInWithGoogle, user, loading: authLoading } = useAuth();
-    const router = useRouter();
     const searchParams = useSearchParams();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -33,10 +33,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
     useEffect(() => {
         if (!authLoading && user) {
-            router.push(redirectTo);
-            router.refresh();
+            // Use full page navigation so middleware reads fresh cookies
+            window.location.href = redirectTo;
         }
-    }, [authLoading, user, router, redirectTo]);
+    }, [authLoading, user, redirectTo]);
 
     const validateEmail = (email: string): string | undefined => {
         if (!email) return "Email is required";
@@ -99,8 +99,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 setSignupComplete(true);
             } else {
                 await signIn(email, password);
-                router.push(redirectTo);
-                router.refresh();
+                // Full page navigation ensures middleware sees the new session cookies
+                window.location.href = redirectTo;
+                return;
             }
         } catch (err: any) {
             // Handle specific Supabase error messages
@@ -140,15 +141,15 @@ export default function AuthForm({ mode }: AuthFormProps) {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-orange-50/30 to-orange-100/50 px-4 py-8">
+        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white via-white to-orange-100/40 px-4 py-12">
             <div className="w-full max-w-sm">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 md:p-6">
+                <div className="bg-white rounded-xl shadow-md border border-gray-200 p-5 md:p-6">
                     {/* Header */}
                     <div className="text-center mb-5">
-                        <h1 className="text-2xl font-semibold font-serif text-gray-900 mb-1.5">
+                        <h1 className="text-xl font-semibold font-serif text-gray-900 mb-1.5">
                             {mode === "login" ? "Continue Your Study" : "Start Studying for Free"}
                         </h1>
-                        <p className="text-base text-gray-600 leading-relaxed">
+                        <p className="text-sm text-gray-600 leading-relaxed">
                             {mode === "login"
                                 ? "Pick up right where you left off."
                                 : "Save your progress, bookmark verses, and get AI explanations."}
@@ -171,29 +172,32 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                 We have sent a confirmation link to <span className="font-medium">{email}</span>. Click
                                 the link in your email to activate your account.
                             </p>
-                            <Link
-                                href="/auth/login"
-                                className="mt-4 inline-flex items-center justify-center rounded-md bg-orange-600 px-3 py-2 text-sm font-medium text-white hover:bg-orange-700"
-                            >
-                                Back to Sign In
+                            <Link href="/auth/login">
+                                <Button variant="primary" size="sm">
+                                    Back to Sign In
+                                </Button>
                             </Link>
                         </div>
                     ) : (
                         <>
                         {/* Google Auth first — lowest friction */}
-                        <button
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="md"
+                            fullWidth
                             onClick={handleGoogleSignIn}
                             disabled={loading}
-                            className="w-full flex h-10 items-center justify-center gap-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="gap-2"
                         >
-                            <svg className="h-5 w-5" viewBox="0 0 24 24">
+                            <svg className="h-4 w-4" viewBox="0 0 24 24">
                                 <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.5 3.9-5.5 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.5 14.6 2.6 12 2.6A9.4 9.4 0 0 0 2.6 12 9.4 9.4 0 0 0 12 21.4c5.4 0 9-3.8 9-9 0-.6-.1-1.1-.2-1.6H12z" />
                                 <path fill="#34A853" d="M2.6 7.9l3.2 2.3c.9-1.8 2.7-3 5.2-3 1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.5 14.6 2.6 12 2.6c-3.6 0-6.8 2-8.4 5.3z" />
                                 <path fill="#FBBC05" d="M12 21.4c2.6 0 4.8-.9 6.4-2.5l-3-2.4c-.8.6-1.8 1-3.4 1-2.5 0-4.6-1.7-5.3-3.9l-3.2 2.5c1.6 3.3 4.9 5.3 8.5 5.3z" />
                                 <path fill="#4285F4" d="M21 12.4c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.4-1.1 2.6-2.1 3.5l3 2.4c1.7-1.6 2.6-4 2.6-8.2z" />
                             </svg>
-                            <span className="text-gray-700">Continue with Google</span>
-                        </button>
+                            Continue with Google
+                        </Button>
 
                         <div className="relative my-4">
                             <div className="absolute inset-0 flex items-center">
@@ -211,7 +215,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                     Name
                                 </label>
                                 <div className="relative">
-                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                     <input
                                         id="name"
                                         type="text"
@@ -231,7 +235,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                         maxLength={100}
                                         aria-invalid={touched.name && !!validationErrors.name}
                                         aria-describedby={validationErrors.name ? "name-error" : undefined}
-                                        className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                        className="w-full h-9 pl-9 pr-3 text-sm rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                     />
                                 </div>
                                 {touched.name && validationErrors.name && (
@@ -247,7 +251,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                 Email
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <input
                                     id="email"
                                     type="email"
@@ -267,7 +271,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                     autoComplete="email"
                                     aria-invalid={touched.email && !!validationErrors.email}
                                     aria-describedby={validationErrors.email ? "email-error" : undefined}
-                                    className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                    className="w-full h-9 pl-9 pr-3 text-sm rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                 />
                             </div>
                             {touched.email && validationErrors.email && (
@@ -282,7 +286,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                 Password
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <input
                                     id="password"
                                     type="password"
@@ -304,7 +308,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                                     autoComplete={mode === "login" ? "current-password" : "new-password"}
                                     aria-invalid={touched.password && !!validationErrors.password}
                                     aria-describedby={validationErrors.password ? "password-error" : undefined}
-                                    className="w-full h-10 pl-10 pr-4 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                    className="w-full h-9 pl-9 pr-3 text-sm rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                 />
                             </div>
                             {mode === "signup" && (
@@ -320,22 +324,23 @@ export default function AuthForm({ mode }: AuthFormProps) {
                         </div>
 
                         {/* Submit Button */}
-                        <button
+                        <Button
                             type="submit"
+                            variant="primary"
+                            size="md"
+                            fullWidth
                             disabled={loading}
-                            className="w-full flex h-10 items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="gap-2"
                         >
                             {loading ? (
                                 <>
-                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                    <Loader2 className="h-4 w-4 animate-spin" />
                                     {mode === "login" ? "Signing in..." : "Creating account..."}
                                 </>
                             ) : (
-                                <>
-                                    {mode === "login" ? "Sign In" : "Start Exploring Free"}
-                                </>
+                                mode === "login" ? "Sign In" : "Start Exploring Free"
                             )}
-                        </button>
+                        </Button>
                         </form>
                         </>
                     )}

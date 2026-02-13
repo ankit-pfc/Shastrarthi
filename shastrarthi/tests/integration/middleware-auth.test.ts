@@ -44,6 +44,19 @@ describe("middleware auth behavior", () => {
         expect(response.headers.get("location")).toBe("http://localhost/app");
     });
 
+    it("redirects to requested path when authenticated user visits login with redirect param", async () => {
+        getUserMock.mockResolvedValue({ data: { user: { id: "u1" } } });
+        const { middleware } = await import("@/middleware");
+        const request = new NextRequest("http://localhost/auth/login?redirect=%2Fapp%2Fdiscover", {
+            headers: { cookie: "sb-local-auth-token=1" },
+        });
+
+        const response = await middleware(request);
+
+        expect(response.status).toBe(307);
+        expect(response.headers.get("location")).toBe("http://localhost/app/discover");
+    });
+
     it("allows protected route with valid session", async () => {
         getUserMock.mockResolvedValue({ data: { user: { id: "u1" } } });
         const { middleware } = await import("@/middleware");

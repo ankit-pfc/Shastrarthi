@@ -64,7 +64,9 @@ export async function middleware(request: NextRequest) {
     }
 
     if (hasValidSession && (pathname === "/auth/login" || pathname === "/auth/signup")) {
-        const redirectUrl = new URL("/app", request.url);
+        const requestedRedirect = request.nextUrl.searchParams.get("redirect");
+        const safeRedirect = requestedRedirect?.startsWith("/") ? requestedRedirect : "/app";
+        const redirectUrl = new URL(safeRedirect, request.url);
         return NextResponse.redirect(redirectUrl);
     }
 
