@@ -63,14 +63,7 @@ export default function IntentBuilder({ compact = false, routePrefix = "/app/dis
         <section className={cn("bg-gray-50", compact ? "py-8" : "py-16")}>
             <div className="container mx-auto px-4">
                 {!compact && (
-                    <div className="text-center mb-6">
-                        <h2 className="text-2xl font-semibold text-gray-900 mb-1">
-                            Build your Shastra task
-                        </h2>
-                        <p className="text-gray-500 text-sm">
-                            Select your intent, lens, and starting point.
-                        </p>
-                    </div>
+                    <div className="h-4" /> // Spacing
                 )}
 
                 <div className="max-w-5xl mx-auto bg-white border border-gray-200 rounded-xl p-5 md:p-6 shadow-sm">

@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Download, StickyNote } from "lucide-react";
 import { useRouter } from "next/navigation";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
 import NewChatWelcome from "./NewChatWelcome";
-import GuruSelector from "./GuruSelector";
 import NotesPanel from "./NotesPanel";
-import { GURU_PERSONAS } from "@/lib/config/prompts";
 import { cn } from "@/lib/utils";
 
 interface ChatInterfaceProps {
@@ -18,7 +16,7 @@ interface ChatInterfaceProps {
 }
 
 export default function ChatInterface({
-    initialTitle = "Deep Research Into Shastras",
+    initialTitle = "New Chat",
     initialThreadId,
     agent,
 }: ChatInterfaceProps) {
@@ -28,10 +26,11 @@ export default function ChatInterface({
     const [title, setTitle] = useState(initialTitle);
     const [selectedPersona, setSelectedPersona] = useState<string>(agent || "default");
     const [isNotesOpen, setIsNotesOpen] = useState(false);
-    const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>(
-        initialThreadId ? [] : []
-    );
+    const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
 
+    // ── Load existing thread ──────────────────────────────────
     useEffect(() => {
         if (!initialThreadId) {
             setMessages([]);
@@ -43,24 +42,30 @@ export default function ChatInterface({
                 if (!response.ok) return;
                 const payload = await response.json();
                 const threadTitle = payload.data?.thread?.title as string | undefined;
-                if (threadTitle?.trim()) {
-                    setTitle(threadTitle);
-                }
+                if (threadTitle?.trim()) setTitle(threadTitle);
+
                 const loadedMessages = (payload.data?.messages ?? []).map((msg: any) => ({
                     role: msg.role,
                     content: msg.content,
                 }));
-                if (loadedMessages.length > 0) {
-                    setMessages(loadedMessages);
-                }
+                if (loadedMessages.length > 0) setMessages(loadedMessages);
             } catch (error) {
                 console.error("Failed loading thread:", error);
             }
         };
-
         void loadThread();
     }, [initialThreadId]);
 
+    // ── Auto-scroll to bottom on new messages ─────────────────
+    const scrollToBottom = useCallback(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, []);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, scrollToBottom]);
+
+    // ── Thread management ─────────────────────────────────────
     const ensureThread = async (firstPrompt: string) => {
         if (threadId) return threadId;
         const response = await fetch("/api/chat/threads", {
@@ -71,16 +76,12 @@ export default function ChatInterface({
                 agent: selectedPersona,
             }),
         });
-        if (!response.ok) {
-            throw new Error("Failed to create thread");
-        }
+        if (!response.ok) throw new Error("Failed to create thread");
         const payload = await response.json();
         const createdThreadId = payload.data.id as string;
         const createdTitle = payload.data.title as string | undefined;
         setThreadId(createdThreadId);
-        if (createdTitle?.trim()) {
-            setTitle(createdTitle);
-        }
+        if (createdTitle?.trim()) setTitle(createdTitle);
         router.replace(`/app/chat/${createdThreadId}`);
         return createdThreadId;
     };
@@ -93,6 +94,7 @@ export default function ChatInterface({
         });
     };
 
+    // ── Send handler ──────────────────────────────────────────
     const onSend = (text: string) => {
         const send = async () => {
             if (isLoading) return;
@@ -114,9 +116,7 @@ export default function ChatInterface({
                     }),
                 });
 
-                if (!response.ok || !response.body) {
-                    throw new Error("Failed to generate response");
-                }
+                if (!response.ok || !response.body) throw new Error("Failed to generate response");
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
@@ -135,14 +135,9 @@ export default function ChatInterface({
                         const line = chunk.trim();
                         if (!line.startsWith("data:")) continue;
                         const data = line.replace(/^data:\s*/, "");
-                        if (data === "[DONE]") {
-                            done = true;
-                            break;
-                        }
+                        if (data === "[DONE]") { done = true; break; }
                         const parsed = JSON.parse(data) as { content?: string; error?: string };
-                        if (parsed.error) {
-                            throw new Error(parsed.error);
-                        }
+                        if (parsed.error) throw new Error(parsed.error);
                         if (parsed.content) {
                             fullAssistantReply += parsed.content;
                             setMessages((prev) => {
@@ -165,26 +160,24 @@ export default function ChatInterface({
                     ...prev,
                     {
                         role: "assistant",
-                        content:
-                            error instanceof Error ? `Unable to answer right now: ${error.message}` : "Unable to answer right now.",
+                        content: error instanceof Error
+                            ? `Unable to answer right now: ${error.message}`
+                            : "Unable to answer right now.",
                     },
                 ]);
             } finally {
                 setIsLoading(false);
             }
         };
-
         void send();
     };
 
+    // ── Helpers ────────────────────────────────────────────────
     const downloadChatAsMarkdown = () => {
         const lines = [`# ${title}`, "", `Thread ID: ${threadId ?? "not-saved-yet"}`, "", "---", ""];
         for (const message of messages) {
             const label = message.role === "user" ? "User" : "Assistant";
-            lines.push(`## ${label}`);
-            lines.push("");
-            lines.push(message.content || "_(empty)_");
-            lines.push("");
+            lines.push(`## ${label}`, "", message.content || "_(empty)_", "");
         }
         const markdown = lines.join("\n");
         const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
@@ -197,104 +190,115 @@ export default function ChatInterface({
         URL.revokeObjectURL(blobUrl);
     };
 
-    const handlePromptSelect = (prompt: string) => {
-        onSend(prompt);
-    };
+    const handlePersonaChange = (persona: string) => setSelectedPersona(persona);
 
-    const handlePersonaChange = (persona: string) => {
-        setSelectedPersona(persona);
-    };
-
-    // Show welcome screen when there are no messages
     const showWelcome = messages.length === 0;
 
+    // ══════════════════════════════════════════════════════════
+    // ── Render ────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
     return (
-        <div className="flex-1 flex h-[100dvh]">
-            {/* Main Chat Area */}
-            <div className="flex-1 flex flex-col h-full min-w-0">
-                {/* Header - Only show when not in welcome mode */}
-                {!showWelcome && (
-                    <div className="h-14 px-4 md:px-6 border-b border-gray-100 flex items-center justify-between bg-white shrink-0 z-10 w-full">
-                        <div className="flex items-center gap-3 overflow-hidden">
-                            <h1 className="text-sm font-medium text-gray-900 truncate max-w-[150px] md:max-w-[200px]">{title}</h1>
-                            <div className="h-4 w-px bg-gray-200" />
-                            <GuruSelector
-                                selectedPersona={selectedPersona}
-                                onPersonaChange={handlePersonaChange}
-                            />
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-500">
-                            <button
-                                onClick={downloadChatAsMarkdown}
-                                className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
-                                title="Download Chat"
-                            >
-                                <Download className="h-4 w-4" />
-                            </button>
-                            <button
-                                onClick={() => setIsNotesOpen(!isNotesOpen)}
-                                className={cn(
-                                    "p-1.5 rounded-md hover:bg-gray-100 transition-colors",
-                                    isNotesOpen && "bg-gray-100 text-gray-900"
-                                )}
-                                title="Toggle Notes"
-                            >
-                                <StickyNote className="h-4 w-4" />
-                            </button>
+        <div className="flex-1 flex h-full">
+            {/* ── Main Chat Column ──────────────────────────── */}
+            <div className="flex-1 flex flex-col h-full min-w-0 bg-[#F3F4F6]">
+
+                {showWelcome ? (
+                    /* ──────────── Welcome State ──────────── */
+                    <div className="flex-1 flex flex-col items-center justify-center px-4 md:px-8">
+                        <div className="w-full max-w-2xl flex flex-col items-center gap-3">
+                            <NewChatWelcome onPromptSelect={onSend} />
+                            <div className="w-full">
+                                <ChatInput
+                                    onSend={onSend}
+                                    isLoading={isLoading}
+                                    selectedPersona={selectedPersona}
+                                    onPersonaChange={handlePersonaChange}
+                                />
+                            </div>
                         </div>
                     </div>
-                )}
-
-                {/* Content Area */}
-                <div className="flex-1 overflow-hidden flex flex-col relative w-full">
-                    {showWelcome ? (
-                        <div className="flex-1 overflow-y-auto w-full">
-                            <div className="min-h-full flex flex-col justify-center">
-                                <NewChatWelcome onPromptSelect={handlePromptSelect} />
-                                <div className="w-full max-w-2xl mx-auto px-6 pb-12">
-                                    <ChatInput onSend={onSend} />
-                                </div>
+                ) : (
+                    /* ──────────── Active Chat State ──────── */
+                    <>
+                        {/* Header Bar */}
+                        <div className="h-12 px-4 md:px-6 border-b border-gray-200/80 flex items-center justify-between bg-white shrink-0 z-10">
+                            <h1 className="text-sm font-medium text-gray-900 truncate max-w-[240px] md:max-w-sm">
+                                {title}
+                            </h1>
+                            <div className="flex items-center gap-1">
+                                <button
+                                    onClick={downloadChatAsMarkdown}
+                                    className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                                    title="Download Chat"
+                                >
+                                    <Download className="h-4 w-4" />
+                                </button>
+                                <button
+                                    onClick={() => setIsNotesOpen(!isNotesOpen)}
+                                    className={cn(
+                                        "p-2 rounded-lg transition-colors",
+                                        isNotesOpen
+                                            ? "bg-gray-100 text-gray-900"
+                                            : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                                    )}
+                                    title="Toggle Notes"
+                                >
+                                    <StickyNote className="h-4 w-4" />
+                                </button>
                             </div>
                         </div>
-                    ) : (
-                        <>
-                            {/* Messages */}
-                            <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6 scroll-smooth w-full">
-                                <div className="max-w-3xl mx-auto space-y-6">
-                                    {messages.map((message, idx) => (
-                                        <MessageBubble
-                                            key={`${message.role}-${idx}`}
-                                            role={message.role}
-                                            content={message.content}
-                                        />
-                                    ))}
-                                    {isLoading && messages[messages.length - 1]?.role === "user" && (
-                                        <div className="flex justify-start">
-                                            <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500">
-                                                Thinking...
+
+                        {/* Messages Area */}
+                        <div
+                            ref={messagesContainerRef}
+                            className="flex-1 overflow-y-auto px-4 md:px-6 py-6 scroll-smooth"
+                        >
+                            <div className="max-w-3xl mx-auto space-y-5">
+                                {messages.map((message, idx) => (
+                                    <MessageBubble
+                                        key={`${message.role}-${idx}`}
+                                        role={message.role}
+                                        content={message.content}
+                                    />
+                                ))}
+
+                                {/* Thinking dots */}
+                                {isLoading && messages[messages.length - 1]?.content === "" && (
+                                    <div className="flex justify-start">
+                                        <div className="bg-white border border-gray-200 rounded-xl px-4 py-3">
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0ms]" />
+                                                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:150ms]" />
+                                                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:300ms]" />
                                             </div>
                                         </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Input Area */}
-                            <div className="flex-shrink-0 px-4 md:px-6 pb-6 pt-2 bg-white/80 backdrop-blur-sm z-10 w-full">
-                                <div className="max-w-3xl mx-auto">
-                                    <ChatInput onSend={onSend} />
-                                    <div className="mt-2 text-center">
-                                        <p className="text-[10px] text-gray-400">
-                                            AI can make mistakes. Please verify important information from original texts.
-                                        </p>
                                     </div>
-                                </div>
+                                )}
+
+                                {/* Scroll anchor */}
+                                <div ref={messagesEndRef} />
                             </div>
-                        </>
-                    )}
-                </div>
+                        </div>
+
+                        {/* Input Area (pinned bottom) */}
+                        <div className="shrink-0 px-4 md:px-6 pb-5 pt-3 bg-gradient-to-t from-[#F3F4F6] via-[#F3F4F6]/80 to-transparent">
+                            <div className="max-w-3xl mx-auto">
+                                <ChatInput
+                                    onSend={onSend}
+                                    isLoading={isLoading}
+                                    selectedPersona={selectedPersona}
+                                    onPersonaChange={handlePersonaChange}
+                                />
+                                <p className="mt-2 text-center text-[10px] text-gray-400">
+                                    AI can make mistakes. Please verify important information from original texts.
+                                </p>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
 
-            {/* Notes Panel (Right Side Split) */}
+            {/* ── Notes Panel (Right Side) ──────────────────── */}
             {isNotesOpen && (
                 <NotesPanel
                     threadId={threadId}

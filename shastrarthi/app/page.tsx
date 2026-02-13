@@ -1,14 +1,10 @@
 import Navbar from "@/components/header/Navbar";
 import Hero from "@/components/landing/Hero";
 import IntentBuilder from "@/components/landing/IntentBuilder";
-import PopularTasks from "@/components/landing/PopularTasks";
-import FeaturedTexts from "@/components/landing/FeaturedTexts";
 import HistorySpotlight from "@/components/landing/HistorySpotlight";
-import HowItWorks from "@/components/landing/HowItWorks";
 // import Pricing from "@/components/landing/Pricing";
 import FAQ from "@/components/landing/FAQ";
 import Footer from "@/components/landing/Footer";
-import { fetchTexts } from "@/lib/services/texts";
 import type { Metadata } from "next";
 import JsonLd from "@/components/seo/JsonLd";
 import { getSiteUrl } from "@/lib/site";
@@ -34,7 +30,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-    const featuredTexts = await fetchTexts({ limit: 6 });
     const siteUrl = getSiteUrl();
 
     const websiteJsonLd = {
@@ -61,10 +56,7 @@ export default async function Home() {
             <Hero />
             <div>
                 <IntentBuilder />
-                <PopularTasks />
-                <FeaturedTexts texts={featuredTexts} />
                 <HistorySpotlight />
-                <HowItWorks />
                 {/* <Pricing /> */}
                 <FAQ />
                 <Footer />

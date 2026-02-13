@@ -1,16 +1,19 @@
 "use client";
 
-import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Breadcrumb from "./Breadcrumb";
 
 export default function TopBar() {
+    const pathname = usePathname();
+    const isChatPage = pathname === "/app" || pathname?.startsWith("/app/chat");
+
+    if (isChatPage) return null;
+
     return (
-        <div className="h-14 border-b border-gray-200 bg-white px-4 md:px-6 flex items-center justify-between">
+        <div className="h-14 border-b border-gray-200 bg-white px-4 md:px-6 flex items-center justify-between shrink-0">
             <Breadcrumb />
             <div className="flex items-center gap-4 text-sm">
-                <Link href="/pricing" className="text-gray-600 hover:text-gray-900">
-                    Pricing
-                </Link>
+                {/* Pricing removed */}
             </div>
         </div>
     );

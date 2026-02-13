@@ -33,7 +33,7 @@ export default async function HistoryPage() {
     }));
 
     return (
-        <div className="max-w-4xl mx-auto pt-8 px-4 md:px-0">
+        <div className="max-w-4xl mx-auto p-4 md:p-6">
             <h1 className="text-3xl font-serif font-bold text-gray-900 mb-2">Ancient History Timeline</h1>
             <p className="text-gray-600 mb-8 max-w-2xl">
                 Explore the chronological development of Indian philosophy, texts, and key figures.

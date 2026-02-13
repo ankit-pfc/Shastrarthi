@@ -43,7 +43,7 @@ export default function NotesPage() {
     );
 
     return (
-        <div className="flex-1 flex flex-col h-screen overflow-hidden bg-gray-50">
+        <div className="flex-1 flex flex-col h-full overflow-hidden bg-gray-50">
             {/* Header */}
             <header className="h-16 px-6 border-b border-gray-200 bg-white flex items-center justify-between shrink-0">
                 <h1 className="text-xl font-semibold text-gray-900">My Notes</h1>
