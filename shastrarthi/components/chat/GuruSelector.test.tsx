@@ -6,7 +6,7 @@ import { GURU_PERSONAS } from "@/lib/config/prompts";
 describe("GuruSelector", () => {
     it("renders the selected persona", () => {
         render(<GuruSelector selectedPersona="default" onPersonaChange={() => { }} />);
-        expect(screen.getByText("Swami Vivekananda")).toBeDefined();
+        expect(screen.getByText("Sūtradhāra")).toBeDefined();
     });
 
     it("opens dropdown on click", () => {
