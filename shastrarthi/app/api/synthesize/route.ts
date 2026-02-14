@@ -58,7 +58,7 @@ export const POST = withAuth(async (request: NextRequest, _context, { user }) =>
         const stream = new ReadableStream({
             async start(controller) {
                 try {
-                    const promptConfig = resolvePrompt("synthesis");
+                    const promptConfig = resolvePrompt("agentSanatan");
                     const fullResponse = await generateSynthesisResponse(query, textSummaries, promptConfig);
                     for (const chunk of fullResponse) {
                         controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: chunk })}\n\n`));

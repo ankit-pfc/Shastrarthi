@@ -56,7 +56,7 @@ export default function GuruSelector({ selectedPersona, onPersonaChange }: GuruS
             </button>
 
             {isOpen && (
-                <div className="absolute bottom-full left-0 mb-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 origin-bottom-left">
+                <div className="absolute bottom-full left-0 mb-2 w-56 max-h-64 overflow-y-auto bg-white rounded-xl shadow-xl border border-gray-200 p-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 origin-bottom-left">
                     {Object.values(GURU_PERSONAS).map((persona) => (
                         <button
                             key={persona.key}

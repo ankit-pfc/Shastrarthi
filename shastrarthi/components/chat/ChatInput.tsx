@@ -38,7 +38,7 @@ export default function ChatInput({ onSend, isLoading, selectedPersona, onPerson
     const canSend = value.trim().length > 0 && !isLoading;
 
     return (
-        <div className="bg-white rounded-xl border border-gray-300 shadow-sm overflow-hidden transition-all duration-200">
+        <div className="bg-white rounded-xl border border-gray-300 shadow-sm transition-all duration-200">
             {/* Textarea Area */}
             <div className="px-3.5 pt-3 pb-1">
                 <textarea

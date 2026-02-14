@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateChatResponse, generateSynthesisResponse, isConfigured, LearnLMError, resolvePrompt } from "@/lib/learnlm";
+import { GURU_PERSONAS } from "@/lib/config/prompts";
 import { withAuth } from "@/lib/api-utils";
 import { buildRateLimitHeaders, checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -10,6 +11,7 @@ interface ChatRequestBody {
     textId?: string;
     verseRef?: string;
     agent?: string;
+    persona?: string;
     query: string;
     conversationHistory?: Array<{ role: string; content: string }>;
 }
@@ -59,7 +61,7 @@ export const POST = withAuth(async (request: NextRequest, _context, { supabase, 
     try {
         // Validate request body
         const body: ChatRequestBody = await request.json();
-        const { textId, verseRef, agent, query, conversationHistory = [] } = body;
+        const { textId, verseRef, agent, persona, query, conversationHistory = [] } = body;
 
         if (!query) {
             return NextResponse.json(
@@ -142,19 +144,44 @@ export const POST = withAuth(async (request: NextRequest, _context, { supabase, 
                         const contextVerses = verses?.filter((v) => Math.abs(v.order_index - currentVerseIndex) <= 3) || [];
                         const contextString = contextVerses.map((v) => `${v.ref}: ${v.translation_en}`).join("\n");
 
-                        const promptConfig = resolvePrompt(AGENT_PROMPT_CONFIG_IDS[agent ?? ""] ?? "readerChat", {
-                            text_name: text.title_en,
-                            verse_ref: verse.ref,
-                            sanskrit: verse.sanskrit || "N/A",
-                            transliteration: verse.transliteration || "N/A",
-                            translation: verse.translation_en,
-                            context_verses: contextString,
-                        });
+                        // Resolve agent prompt — persona overrides agent if both are provided
+                        const personaData = persona ? GURU_PERSONAS[persona] : undefined;
+                        const configId = personaData?.promptConfigId ?? AGENT_PROMPT_CONFIG_IDS[agent ?? ""] ?? "agentSanatan";
+                        const promptConfig = resolvePrompt(configId);
+
+                        // Inject verse context into the system prompt
+                        const verseContext = [
+                            `You are currently assisting a user studying the text: ${text.title_en}.`,
+                            `Specifically, they are looking at verse ${verse.ref}.`,
+                            ``,
+                            `Verse information:`,
+                            `Sanskrit: ${verse.sanskrit || "N/A"}`,
+                            `Transliteration: ${verse.transliteration || "N/A"}`,
+                            `English Translation: ${verse.translation_en}`,
+                            ``,
+                            `Surrounding verses for context:`,
+                            contextString,
+                        ].join("\n");
+                        promptConfig.systemPrompt = `${promptConfig.systemPrompt}\n\n---\n\n${verseContext}`;
+
+                        // Prepend persona masterPrompt to system instruction if persona is selected
+                        if (personaData?.masterPrompt) {
+                            promptConfig.systemPrompt = `${personaData.masterPrompt}\n\n---\n\n${promptConfig.systemPrompt}`;
+                        }
 
                         fullResponse = await generateChatResponse(promptConfig, query);
                     } else {
                         const history = sanitizeConversationHistory(conversationHistory);
-                        const promptConfig = resolvePrompt(AGENT_PROMPT_CONFIG_IDS[agent ?? ""] ?? "synthesis");
+                        // Resolve agent prompt — persona overrides agent if both are provided
+                        const personaData = persona ? GURU_PERSONAS[persona] : undefined;
+                        const configId = personaData?.promptConfigId ?? AGENT_PROMPT_CONFIG_IDS[agent ?? ""] ?? "agentSanatan";
+                        const promptConfig = resolvePrompt(configId);
+
+                        // Prepend persona masterPrompt to system instruction if persona is selected
+                        if (personaData?.masterPrompt) {
+                            promptConfig.systemPrompt = `${personaData.masterPrompt}\n\n---\n\n${promptConfig.systemPrompt}`;
+                        }
+
                         fullResponse = await generateSynthesisResponse(
                             query,
                             "No verse context provided.",
